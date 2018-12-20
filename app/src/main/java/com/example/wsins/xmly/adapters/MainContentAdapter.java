@@ -1,7 +1,6 @@
 package com.example.wsins.xmly.adapters;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentContainer;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
