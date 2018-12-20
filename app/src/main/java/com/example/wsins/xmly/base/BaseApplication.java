@@ -2,6 +2,7 @@ package com.example.wsins.xmly.base;
 
 import android.app.Application;
 
+import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 
@@ -22,5 +23,6 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this ,mAppSecret);
         }
+        LogUtil.init(this.getPackageName(), true);
     }
 }
