@@ -1,11 +1,14 @@
 package com.example.wsins.xmly.fragments;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.wsins.xmly.R;
+import com.example.wsins.xmly.adapters.RecommendListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
@@ -22,12 +25,25 @@ import java.util.Map;
 public class RecommendFragment extends BaseFragment {
 
     private static final String TAG = "RecommendFragment";
+    private View rootView;
+    private RecyclerView recommendRv;
+    private RecommendListAdapter recommendListAdapter;
 
     @Override
     protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
         //view加载完成
-        View rootView = layoutInflater.inflate(R.layout.fragment_recommend, container, false);
+        rootView = layoutInflater.inflate(R.layout.fragment_recommend, container, false);
 
+        //Recyclerview的使用
+        //1.找出控件
+        recommendRv = rootView.findViewById(R.id.recommend_list);
+        //2.设置布局管理器
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recommendRv.setLayoutManager(linearLayoutManager);
+        //3.设置适配器
+        recommendListAdapter = new RecommendListAdapter();
+        recommendRv.setAdapter(recommendListAdapter);
         //去拿数据回来
         getRecommendData();
 
@@ -48,12 +64,14 @@ public class RecommendFragment extends BaseFragment {
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(@Nullable GussLikeAlbumList gussLikeAlbumList) {
+                LogUtil.d(TAG, "thread name --> " + Thread.currentThread().getName());
                 //数据获取成功
                 if (gussLikeAlbumList != null) {
                     List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                    if (albumList != null) {
-                        LogUtil.d(TAG, "size --> " + albumList.size());
-                    }
+//                    if (albumList != null) {
+//                        LogUtil.d(TAG, "size --> " + albumList.size());
+//                    }
+                    upRecommendUI(albumList);
                 }
             }
 
@@ -65,5 +83,10 @@ public class RecommendFragment extends BaseFragment {
             }
         });
 
+    }
+
+    private void upRecommendUI(List<Album> albumList) {
+        //把数据设置给适配器，并更新UI
+        recommendListAdapter.setDate(albumList);
     }
 }
