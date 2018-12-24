@@ -23,6 +23,6 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this ,mAppSecret);
         }
-        LogUtil.init(this.getPackageName(), true);
+        LogUtil.init(this.getPackageName(), false);
     }
 }
