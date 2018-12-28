@@ -27,32 +27,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
-
-
-//        Map<String, String> map = new HashMap<String, String>();
-//        CommonRequest.getCategories(map, new IDataCallBack<CategoryList>() {
-//            @Override
-//            public void onSuccess(@Nullable CategoryList categoryList) {
-//                List<Category> categories = categoryList.getCategories();
-//                if (categories != null) {
-//                    int size = categories.size();
-//                    Log.d(TAG, "categories size <--" + size);
-//                    for (Category category : categories) {
-//                        //Log.d(TAG, "category --> " + category.getCategoryName());
-//                        LogUtil.d(TAG, "category --> " + category.getCategoryName());
-//                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onError(int i, String s) {
-//                //Log.d(TAG, "error code -- " + i + " error msg ==> " + s);
-//                LogUtil.d(TAG,"error code -- " + i + " error msg ==> " + s);
-//
-//            }
-//        });
-
     }
 
     private void initEvent() {
