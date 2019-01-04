@@ -13,6 +13,8 @@ import com.example.wsins.xmly.adapters.RecommendListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.IRecommendViewCallback;
 import com.example.wsins.xmly.presenters.RecommendPersenter;
+import com.example.wsins.xmly.utils.LogUtil;
+import com.example.wsins.xmly.views.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
@@ -26,9 +28,34 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     private RecyclerView recommendRv;
     private RecommendListAdapter recommendListAdapter;
     private RecommendPersenter recommendPersenter;
+    private UILoader uiLoader;
 
     @Override
-    protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
+    protected View onSubViewLoaded(final LayoutInflater layoutInflater, ViewGroup container) {
+
+        uiLoader = new UILoader(getContext()) {
+            @Override
+            protected View getSuccessView(ViewGroup container) {
+                return createSuccessView(layoutInflater, container);
+            }
+        };
+
+        //获取到逻辑层对象
+        recommendPersenter = RecommendPersenter.getsInstance();
+        //先要注册通知接口的注册
+        recommendPersenter.registerViewCallback(this);
+        //获取推荐列表
+        recommendPersenter.getRecommendList();
+
+        if (uiLoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup) uiLoader.getParent()).removeView(uiLoader);
+        }
+
+        //返iew，给界面显示
+        return uiLoader;
+    }
+
+    private View createSuccessView(LayoutInflater layoutInflater, ViewGroup container) {
         //view加载完成
         rootView = layoutInflater.inflate(R.layout.fragment_recommend, container, false);
 
@@ -51,39 +78,38 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //3.设置适配器
         recommendListAdapter = new RecommendListAdapter();
         recommendRv.setAdapter(recommendListAdapter);
-
-        //获取到逻辑层对象
-        recommendPersenter = RecommendPersenter.getsInstance();
-        //获取推荐列表
-        recommendPersenter.getRecommendList();
-        //先要注册通知接口的注册
-        recommendPersenter.registerViewCallback(this);
-
-        //返iew，给界面显示
         return rootView;
-    }
-
-    private void upRecommendUI(List<Album> albumList) {
-        //把数据设置给适配器，并更新UI
-        recommendListAdapter.setDate(albumList);
     }
 
     @Override
     public void onRecommendListLoaded(List<Album> result) {
+        LogUtil.d(TAG, "onRecommendListLoaded");
         //当我们获取到推荐内容的时候，这个方法就会被调用（成功了）
         //数据回来以后，就是更新UI
         //把数据设置给适配器并更新UI
         recommendListAdapter.setDate(result);
+        uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
 
     }
 
     @Override
-    public void onLoaderMore(List<Album> result) {
+    public void onNetworkError() {
+        LogUtil.d(TAG, "onNetworkError");
+        uiLoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
 
     }
 
     @Override
-    public void onRefreshMore(List<Album> result) {
+    public void onEmpty() {
+        LogUtil.d(TAG, "onEmpty");
+        uiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+
+    }
+
+    @Override
+    public void onLoading() {
+        LogUtil.d(TAG, "onLoading");
+        uiLoader.updateStatus(UILoader.UIStatus.LOADING);
 
     }
 

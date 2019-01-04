@@ -52,6 +52,7 @@ public class RecommendPersenter implements IRecommendPersenter {
     public void getRecommendList() {
         //获取推荐内容
         //封装参数
+        updateLoading();
         Map<String, String> map = new HashMap<String, String>();
         //这个参数表示一页返回多少条
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
@@ -72,19 +73,40 @@ public class RecommendPersenter implements IRecommendPersenter {
                 //数据获取出错
                 LogUtil.d(TAG, "error --> " + i);
                 LogUtil.d(TAG, "errorMsg --> " + s);
+                handlerError();
             }
         });
 
     }
 
-    private void handlerRecommendResult(List<Album> albumList) {
-        //通知UI更新
+    private void handlerError() {
         if (callBacks != null) {
             for (IRecommendViewCallback callBack : callBacks) {
-                callBack.onRecommendListLoaded(albumList);
+                callBack.onNetworkError();
+            }
+        }
+    }
+
+    private void handlerRecommendResult(List<Album> albumList) {
+        //通知UI更新
+        if (albumList != null) {
+            if (albumList.size() == 0) {
+                for (IRecommendViewCallback callBack : callBacks) {
+                    callBack.onEmpty();
+                }
+            } else {
+                for (IRecommendViewCallback callBack : callBacks) {
+                    callBack.onRecommendListLoaded(albumList);
+                }
             }
         }
 
+    }
+
+    private void updateLoading() {
+        for (IRecommendViewCallback callBack : callBacks) {
+            callBack.onLoading();
+        }
     }
 
     @Override
