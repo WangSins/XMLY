@@ -1,5 +1,6 @@
 package com.example.wsins.xmly.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.wsins.xmly.DetailActivity;
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.RecommendListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
@@ -21,7 +23,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, RecommendListAdapter.OnRecommendItemClickListener {
 
     private static final String TAG = "RecommendFragment";
     private View rootView;
@@ -80,6 +82,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //3.设置适配器
         recommendListAdapter = new RecommendListAdapter();
         recommendRv.setAdapter(recommendListAdapter);
+        recommendListAdapter.setOnRecommendItemClickListener(this);
         return rootView;
     }
 
@@ -132,5 +135,13 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         if (recommendPersenter != null) {
             recommendPersenter.getRecommendList();
         }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        //item被点击了，跳转到详情页面
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
+
     }
 }

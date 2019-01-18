@@ -90,6 +90,8 @@ public class RecommendPersenter implements IRecommendPersenter {
     private void handlerRecommendResult(List<Album> albumList) {
         //通知UI更新
         if (albumList != null) {
+            //测试，清空一下界面，让界面显示空
+            //albumList.clear();
             if (albumList.size() == 0) {
                 for (IRecommendViewCallback callBack : callBacks) {
                     callBack.onEmpty();
