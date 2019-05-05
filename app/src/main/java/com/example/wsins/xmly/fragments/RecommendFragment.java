@@ -14,6 +14,7 @@ import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.RecommendListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.IRecommendViewCallback;
+import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.RecommendPersenter;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.UILoader;
@@ -138,7 +139,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(int position, Album album) {
+        AlbumDetailPresenter.getInstance().setTargetAlbum(album);
         //item被点击了，跳转到详情页面
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);
