@@ -1,8 +1,7 @@
 package com.example.wsins.xmly.interfaces;
 
-import android.os.Trace;
-
 import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.List;
 
@@ -11,9 +10,9 @@ public interface IAlbumDetailViewCallBack {
     /**
      * 专辑详情内容加载出来了
      *
-     * @param traces
+     * @param tracks
      */
-    void onDetailListLoaded(List<Trace> traces);
+    void onDetailListLoaded(List<Track> tracks);
 
     /**
      * 把Album传给UI使用

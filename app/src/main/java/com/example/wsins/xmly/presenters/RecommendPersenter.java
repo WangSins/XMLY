@@ -55,7 +55,7 @@ public class RecommendPersenter implements IRecommendPersenter {
         updateLoading();
         Map<String, String> map = new HashMap<String, String>();
         //这个参数表示一页返回多少条
-        map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
+        map.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(@Nullable GussLikeAlbumList gussLikeAlbumList) {
