@@ -1,16 +1,20 @@
 package com.example.wsins.xmly.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 
 import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 
 
 public class BaseApplication extends Application {
 
     private static Handler handler = null;
+
+    private static Context context = null;
 
     @Override
     public void onCreate() {
@@ -27,10 +31,19 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this, mAppSecret);
         }
+
+        //初始化播放器
+        XmPlayerManager.getInstance(this).init();
+
         //初始化LogUtil
         LogUtil.init(this.getPackageName(), false);
 
         handler = new Handler();
+        context = getBaseContext();
+    }
+
+    public static Context getAppContext() {
+        return context;
     }
 
     public static Handler getHandler() {

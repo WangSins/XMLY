@@ -3,7 +3,7 @@ package com.example.wsins.xmly.presenters;
 import android.support.annotation.Nullable;
 
 import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
-import com.example.wsins.xmly.interfaces.IAlbumDetialPresenter;
+import com.example.wsins.xmly.interfaces.IAlbumDetailPresenter;
 import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by Sin on 2019/1/25
  */
-public class AlbumDetailPresenter implements IAlbumDetialPresenter {
+public class AlbumDetailPresenter implements IAlbumDetailPresenter {
 
     private static final String TAG = "AlbumDetailPresenter";
     private List<IAlbumDetailViewCallBack> callBacks = new ArrayList<>();
@@ -65,29 +65,38 @@ public class AlbumDetailPresenter implements IAlbumDetialPresenter {
         CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(@Nullable TrackList trackList) {
-                LogUtil.d(TAG, "current Thread --> "+Thread.currentThread().getName());
+                LogUtil.d(TAG, "current Thread --> " + Thread.currentThread().getName());
                 if (trackList != null) {
                     List<Track> tracks = trackList.getTracks();
                     LogUtil.d(TAG, "tracks size --> " + tracks.size());
                     handlerAlbumDetailResult(tracks);
-
                 }
             }
 
             @Override
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG, "errorCode ->" + errorCode + ", errorMsg ->" + errorMsg);
-
+                handleError(errorCode, errorMsg);
             }
         });
 
+    }
+
+    /**
+     * 如果发生错误，通知UI
+     * @param errorCode
+     * @param errorMsg
+     */
+    private void handleError(int errorCode, String errorMsg) {
+        for (IAlbumDetailViewCallBack callBack : callBacks) {
+            callBack.onNetWorkError(errorCode, errorMsg);
+        }
     }
 
     private void handlerAlbumDetailResult(List<Track> tracks) {
         for (IAlbumDetailViewCallBack callBack : callBacks) {
             callBack.onDetailListLoaded(tracks);
         }
-
     }
 
     @Override
@@ -98,13 +107,11 @@ public class AlbumDetailPresenter implements IAlbumDetialPresenter {
                 detailViewCallBack.onAlbumLoaded(mTargetAlbum);
             }
         }
-
     }
 
     @Override
-    public void unregisterViewCallBack(IAlbumDetailViewCallBack detailViewCallBack) {
+    public void unRegisterViewCallBack(IAlbumDetailViewCallBack detailViewCallBack) {
         callBacks.remove(detailViewCallBack);
-
     }
 
     public void setTargetAlbum(Album targetAlbum) {

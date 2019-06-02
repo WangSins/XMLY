@@ -121,19 +121,18 @@ public class RecommendPersenter implements IRecommendPersenter {
 
     }
 
-    @Override
-    public void registerViewCallback(IRecommendViewCallback callback) {
-        if (callBacks != null && !callBacks.contains(callback)) {
-            callBacks.add(callback);
-        }
 
+    @Override
+    public void registerViewCallBack(IRecommendViewCallback iRecommendViewCallback) {
+        if (callBacks != null && !callBacks.contains(iRecommendViewCallback)) {
+            callBacks.add(iRecommendViewCallback);
+        }
     }
 
     @Override
-    public void unRegisterViewCallback(IRecommendViewCallback callback) {
+    public void unRegisterViewCallBack(IRecommendViewCallback iRecommendViewCallback) {
         if (callBacks != null) {
-            callBacks.remove(callback);
+            callBacks.remove(iRecommendViewCallback);
         }
-
     }
 }

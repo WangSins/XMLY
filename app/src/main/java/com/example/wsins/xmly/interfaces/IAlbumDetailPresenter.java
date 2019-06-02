@@ -2,12 +2,7 @@ package com.example.wsins.xmly.interfaces;
 
 import com.example.wsins.xmly.base.IBasePresenter;
 
-public interface IRecommendPersenter extends IBasePresenter<IRecommendViewCallback> {
-
-    /**
-     * 获取推荐内容
-     */
-    void getRecommendList();
+public interface IAlbumDetailPresenter extends IBasePresenter<IAlbumDetailViewCallBack> {
 
     /**
      * 下拉刷新内容
@@ -19,4 +14,11 @@ public interface IRecommendPersenter extends IBasePresenter<IRecommendViewCallba
      */
     void loadMore();
 
+    /**
+     * 获取专辑详情
+     *
+     * @param albumId
+     * @param page
+     */
+    void getAlbumDatail(int albumId, int page);
 }

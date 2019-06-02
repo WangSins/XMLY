@@ -20,6 +20,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     //格式化时间
     private SimpleDateFormat updateDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat durationFormat = new SimpleDateFormat("mm:ss");
+    private ItemClickListener itemClickListener = null;
 
     @NonNull
     @Override
@@ -29,9 +30,9 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InnerHolder innerHolder, int i) {
+    public void onBindViewHolder(@NonNull InnerHolder innerHolder, final int i) {
         //找到控件
-        View itemview = innerHolder.itemView;
+        final View itemview = innerHolder.itemView;
         //顺序ID
         TextView orderTv = itemview.findViewById(R.id.item_id_text);
         //标题
@@ -46,15 +47,30 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
 
         //设置数据
         Track track = detailData.get(i);
-        orderTv.setText(i + "");
+        orderTv.setText((i + 1) + "");
         titleTv.setText(track.getTrackTitle());
         playCountTv.setText(track.getPlayCount() + "");
 
-        String durationText = durationFormat.format(track.getDuration()*1000);
+        String durationText = durationFormat.format(track.getDuration() * 1000);
         durationTv.setText(durationText);
 
         String updateTimeText = updateDateFormat.format(track.getUpdatedAt());
         updateDateTv.setText(updateTimeText);
+
+
+        //设置item的点击事件
+        itemview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+//                Toast.makeText(v.getContext(), "you click " + i + " item", Toast.LENGTH_SHORT).show();
+                if (itemClickListener != null) {
+                    //参数需要有列表和位置
+                    itemClickListener.onItemClick(detailData, i);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -75,5 +91,13 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
         public InnerHolder(@NonNull View itemView) {
             super(itemView);
         }
+    }
+
+    public void setItemClickListener(ItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
+
+    public interface ItemClickListener {
+        void onItemClick(List<Track> detailData, int i);
     }
 }

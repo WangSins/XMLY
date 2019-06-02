@@ -95,6 +95,8 @@
             android:id="@+id/tv_album_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="这是标题"
             android:textColor="@color/white"
             android:textSize="18sp" />
@@ -110,14 +112,12 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:overScrollMode="never"
-        android:id="@+id/album_detail_list"
+    <FrameLayout
+        android:id="@+id/datail_list_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/player_control_container">
+        android:layout_below="@+id/player_control_container">
 
-    </android.support.v7.widget.RecyclerView>
-
+    </FrameLayout>
 
 </RelativeLayout>
