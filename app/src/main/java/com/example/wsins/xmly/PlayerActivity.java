@@ -19,7 +19,11 @@ import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.*;
 
 public class PlayerActivity extends BaseActivity implements IPlayerCallBack, ViewPager.OnPageChangeListener {
 
@@ -40,15 +44,29 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     private ViewPager trackPageView;
     private PalyerTrackPageAdapter palyerTrackPageAdapter;
     private boolean isUserSlidePage = false;
+    private ImageView playerModeSwitch;
+    private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> playModeRule = new HashMap<>();
+    private XmPlayListControl.PlayMode currentMode = PLAY_MODEL_LIST;
+
+    //处理播放模式的切换
+    //列表播放：PLAY_MODEL_LIST (默认)
+    //列表循环：PLAY_MODEL_LIST_LOOP
+    //随机播放：PLAY_MODEL_RANDOM
+    //单曲循环: PLAY_MODEL_SINGLE_LOOP
+    static {
+        playModeRule.put(PLAY_MODEL_LIST, PLAY_MODEL_LIST_LOOP);
+        playModeRule.put(PLAY_MODEL_LIST_LOOP, PLAY_MODEL_RANDOM);
+        playModeRule.put(PLAY_MODEL_RANDOM, PLAY_MODEL_SINGLE_LOOP);
+        playModeRule.put(PLAY_MODEL_SINGLE_LOOP, PLAY_MODEL_LIST);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-
+        initView();
         playerPresenter = PlayerPresenter.getPlayerPresenter();
         playerPresenter.registerViewCallBack(this);
-        initView();
         //在界面初始化以后才去获取数据
         playerPresenter.getPlayList();
         initEvent();
@@ -79,6 +97,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         palyerTrackPageAdapter = new PalyerTrackPageAdapter();
         //设置适配器
         trackPageView.setAdapter(palyerTrackPageAdapter);
+
+        //切换播放模式
+        playerModeSwitch = this.findViewById(R.id.player_mode_switch);
 
         conttrolBtn = this.findViewById(R.id.play_or_pause);
         totalDurationTv = this.findViewById(R.id.track_duration);
@@ -167,6 +188,41 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             }
         });
 
+        playerModeSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //根据当前的mode获取下一个mode
+                XmPlayListControl.PlayMode playMode = playModeRule.get(currentMode);
+                //修改播放模式
+                if (playerPresenter != null) {
+                    playerPresenter.switchPlayMode(playMode);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 根据当前状态更新播放图标
+     */
+    private void updatePlayModeImg() {
+        int resId = R.drawable.selector_play_mode_list_order;
+        switch (currentMode) {
+            case PLAY_MODEL_LIST:
+                resId = R.drawable.selector_play_mode_list_order;
+                break;
+            case PLAY_MODEL_RANDOM:
+                resId = R.drawable.selector_play_mode_pandom;
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                resId = R.drawable.selector_play_mode_list_loop;
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                resId = R.drawable.selector_play_mode_single_loop;
+                break;
+        }
+        playerModeSwitch.setImageResource(resId);
+
     }
 
     @Override
@@ -213,6 +269,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode playMode) {
+        //更新播放模式，并且修改UI
+        currentMode = playMode;
+        updatePlayModeImg();
 
     }
 
