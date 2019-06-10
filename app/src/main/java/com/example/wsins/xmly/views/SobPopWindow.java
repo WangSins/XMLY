@@ -71,6 +71,7 @@ public class SobPopWindow extends PopupWindow {
 
     /**
      * 给适配器设置数据
+     *
      * @param data
      */
     public void setListData(List<Track> data) {
@@ -78,6 +79,12 @@ public class SobPopWindow extends PopupWindow {
             playListAdapter.setData(data);
         }
 
+    }
+
+    public void setCurrentPlayPosition(int position) {
+        if (playListAdapter != null) {
+            playListAdapter.setCurrentPlayPosition(position);
+        }
     }
 
 }

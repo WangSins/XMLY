@@ -56,6 +56,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.InnerH
 
     }
 
+    public void setCurrentPlayPosition(int position) {
+        playingIndex = position;
+        notifyDataSetChanged();
+    }
+
     public class InnerHoler extends RecyclerView.ViewHolder {
         public InnerHoler(@NonNull View itemView) {
             super(itemView);
