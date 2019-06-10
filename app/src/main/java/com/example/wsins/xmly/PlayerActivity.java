@@ -1,12 +1,17 @@
 package com.example.wsins.xmly;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -15,6 +20,7 @@ import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
+import com.example.wsins.xmly.views.SobPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -47,6 +53,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     private ImageView playerModeSwitch;
     private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> playModeRule = new HashMap<>();
     private XmPlayListControl.PlayMode currentMode = PLAY_MODEL_LIST;
+    private ImageView playerList;
+    public final int BG_ANIMATION_DURATION = 500;
 
     //处理播放模式的切换
     //列表播放：PLAY_MODEL_LIST (默认)
@@ -60,6 +68,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         playModeRule.put(PLAY_MODEL_SINGLE_LOOP, PLAY_MODEL_LIST);
     }
 
+    private SobPopWindow sobPopWindow;
+    private ValueAnimator enterBgAnimator;
+    private ValueAnimator outBgAnimator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +82,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         //在界面初始化以后才去获取数据
         playerPresenter.getPlayList();
         initEvent();
+        initBgAnimation();
     }
 
     @Override
@@ -100,6 +113,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
         //切换播放模式
         playerModeSwitch = this.findViewById(R.id.player_mode_switch);
+        //播放列表
+        playerList = this.findViewById(R.id.player_list);
+        sobPopWindow = new SobPopWindow();
 
         conttrolBtn = this.findViewById(R.id.play_or_pause);
         totalDurationTv = this.findViewById(R.id.track_duration);
@@ -199,7 +215,55 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
                 }
             }
         });
+        playerList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //展示播放列表
+                sobPopWindow.showAtLocation(v, Gravity.BOTTOM, 0, 0);
+                //修改背景透明度变化渐变过程
+                enterBgAnimator.start();
+            }
+        });
+        sobPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                outBgAnimator.start();
+            }
+        });
 
+    }
+
+    private void initBgAnimation() {
+        enterBgAnimator = ValueAnimator.ofFloat(1.0f, 0.7f);
+        enterBgAnimator.setDuration(BG_ANIMATION_DURATION);
+        enterBgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float animatedValue = (float) animation.getAnimatedValue();
+                //pop进入，处理背景透明度
+                updateBgAlpha(animatedValue);
+
+            }
+        });
+
+        outBgAnimator = ValueAnimator.ofFloat(0.7f, 1.0f);
+        outBgAnimator.setDuration(BG_ANIMATION_DURATION);
+        outBgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float animatedValue = (float) animation.getAnimatedValue();
+                //pop退出，处理背景透明度
+                updateBgAlpha(animatedValue);
+            }
+        });
+
+    }
+
+    public void updateBgAlpha(float alpha) {
+        Window window = getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.alpha = alpha;
+        window.setAttributes(attributes);
     }
 
     /**
@@ -263,6 +327,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         //把数据设置到适配器里
         if (palyerTrackPageAdapter != null) {
             palyerTrackPageAdapter.setData(list);
+        }
+        //数据回啦以后，也要给节目列表一份
+        if (sobPopWindow != null) {
+            sobPopWindow.setListData(list);
         }
 
     }

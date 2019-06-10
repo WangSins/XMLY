@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:maxLines="2"
             android:text="我想问一下，这里是不是标题啊！我觉得这个地方就是啊！"
-            android:textColor="@color/color_black"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <LinearLayout
