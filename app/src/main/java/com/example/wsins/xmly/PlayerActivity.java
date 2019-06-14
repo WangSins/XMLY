@@ -227,7 +227,17 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         sobPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
+                //pop窗体消失后，恢复透明度
                 outBgAnimator.start();
+            }
+        });
+        sobPopWindow.setPlayListItemClickListener(new SobPopWindow.PlayListItemClickListener() {
+            @Override
+            public void onItemClick(int positon) {
+                //播放列表里地item被点击
+                if (playerPresenter != null) {
+                    playerPresenter.playByIndex(positon);
+                }
             }
         });
 
