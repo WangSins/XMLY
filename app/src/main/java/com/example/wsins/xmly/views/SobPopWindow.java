@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -23,14 +22,17 @@ import java.util.List;
 public class SobPopWindow extends PopupWindow {
 
     private final View popView;
-    private LinearLayout playListControlContainer;
+    private View playListControlContainer;
     private RecyclerView tracksList;
     private TextView closeBtn;
     private PlayListAdapter playListAdapter;
     private TextView playModeTv;
     private ImageView playModeIv;
     private View playPlayModeContainer;
-    private PlaylistPlayModeClickListener mPlayModeClickListener = null;
+    private PlaylistActionClickListener mPlayModeClickListener = null;
+    private View orderBtnContainer;
+    private ImageView orderIcon;
+    private TextView orderText;
 
     public SobPopWindow() {
         //设置宽高
@@ -62,10 +64,14 @@ public class SobPopWindow extends PopupWindow {
         tracksList.setAdapter(playListAdapter);
 
         closeBtn = popView.findViewById(R.id.play_list_close_btn);
-
+        //播放模式相关
         playModeTv = popView.findViewById(R.id.play_list_play_mode_tv);
         playModeIv = popView.findViewById(R.id.play_list_play_mode_iv);
         playPlayModeContainer = popView.findViewById(R.id.play_list_play_mode_container);
+        //播放顺序相关
+        orderBtnContainer = popView.findViewById(R.id.play_list_order_container);
+        orderIcon = popView.findViewById(R.id.play_list_order_iv);
+        orderText = popView.findViewById(R.id.play_list_order_tv);
 
 
     }
@@ -86,6 +92,15 @@ public class SobPopWindow extends PopupWindow {
                     mPlayModeClickListener.onPlayModeClick();
                 }
 
+            }
+        });
+        orderBtnContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //切换播放列表为顺序或者逆序
+                if (mPlayModeClickListener != null) {
+                    mPlayModeClickListener.onOrderClick();
+                }
             }
         });
     }
@@ -123,14 +138,26 @@ public class SobPopWindow extends PopupWindow {
     }
 
     /**
+     * 更新切换列表顺序和逆序的按钮和文字更新
+     *
+     * @param isOrder
+     */
+    public void updateOrderIcon(boolean isOrder) {
+        orderIcon.setImageResource(isOrder ?
+                R.drawable.selector_play_mode_list_order :
+                R.drawable.selector_play_mode_list_revers);
+        orderText.setText(BaseApplication.getAppContext().getResources().getString(isOrder ? R.string.order_text : R.string.revers));
+    }
+
+    /**
      * 根据当前状态更新播放图标
      */
     private void updatePlayModeImg(XmPlayListControl.PlayMode playMode) {
-        int resId = R.drawable.selector_play_mode_list_order;
+        int resId = R.drawable.selector_play_mode_list_revers;
         int textId = R.string.play_mode_order_text;
         switch (playMode) {
             case PLAY_MODEL_LIST:
-                resId = R.drawable.selector_play_mode_list_order;
+                resId = R.drawable.selector_play_mode_list_revers;
                 textId = R.string.play_mode_order_text;
                 break;
             case PLAY_MODEL_RANDOM:
@@ -155,12 +182,16 @@ public class SobPopWindow extends PopupWindow {
         void onItemClick(int positon);
     }
 
-    public void setPlaylistPlayModeClickListener(PlaylistPlayModeClickListener playModeClickListener) {
+    public void setPlaylistActionListener(PlaylistActionClickListener playModeClickListener) {
         mPlayModeClickListener = playModeClickListener;
     }
 
-    public interface PlaylistPlayModeClickListener {
+    public interface PlaylistActionClickListener {
+        //播放模式被点击
         void onPlayModeClick();
+
+        //播放逆序或者顺序播放按钮被点击
+        void onOrderClick();
     }
 
 }

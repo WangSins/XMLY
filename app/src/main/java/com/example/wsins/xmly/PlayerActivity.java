@@ -235,11 +235,20 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
                 }
             }
         });
-        sobPopWindow.setPlaylistPlayModeClickListener(new SobPopWindow.PlaylistPlayModeClickListener() {
+        sobPopWindow.setPlaylistActionListener(new SobPopWindow.PlaylistActionClickListener() {
             @Override
             public void onPlayModeClick() {
                 //切换播放模式
                 switchPlayMode();
+            }
+
+            @Override
+            public void onOrderClick() {
+                //切换播放列表顺序和逆序
+                //Toast.makeText(PlayerActivity.this, "切换列表顺序", Toast.LENGTH_SHORT).show();
+                if (playerPresenter != null) {
+                    playerPresenter.reversePlayList();
+                }
             }
         });
 
@@ -291,10 +300,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
      * 根据当前状态更新播放图标
      */
     private void updatePlayModeImg() {
-        int resId = R.drawable.selector_play_mode_list_order;
+        int resId = R.drawable.selector_play_mode_list_revers;
         switch (currentMode) {
             case PLAY_MODEL_LIST:
-                resId = R.drawable.selector_play_mode_list_order;
+                resId = R.drawable.selector_play_mode_list_revers;
                 break;
             case PLAY_MODEL_RANDOM:
                 resId = R.drawable.selector_play_mode_random;
@@ -423,6 +432,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         if (sobPopWindow != null) {
             sobPopWindow.setCurrentPlayPosition(playIndex);
         }
+    }
+
+    @Override
+    public void updateListOrder(boolean isReverse) {
+        sobPopWindow.updateOrderIcon(isReverse);
     }
 
     @Override
