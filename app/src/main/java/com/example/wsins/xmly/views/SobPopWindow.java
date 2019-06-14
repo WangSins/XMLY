@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.PlayListAdapter;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.util.List;
 
@@ -25,6 +27,10 @@ public class SobPopWindow extends PopupWindow {
     private RecyclerView tracksList;
     private TextView closeBtn;
     private PlayListAdapter playListAdapter;
+    private TextView playModeTv;
+    private ImageView playModeIv;
+    private View playPlayModeContainer;
+    private PlaylistPlayModeClickListener mPlayModeClickListener = null;
 
     public SobPopWindow() {
         //设置宽高
@@ -57,6 +63,11 @@ public class SobPopWindow extends PopupWindow {
 
         closeBtn = popView.findViewById(R.id.play_list_close_btn);
 
+        playModeTv = popView.findViewById(R.id.play_list_play_mode_tv);
+        playModeIv = popView.findViewById(R.id.play_list_play_mode_iv);
+        playPlayModeContainer = popView.findViewById(R.id.play_list_play_mode_container);
+
+
     }
 
     private void initEvent() {
@@ -65,6 +76,16 @@ public class SobPopWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 SobPopWindow.this.dismiss();
+            }
+        });
+        playPlayModeContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //切换播放模式
+                if (mPlayModeClickListener != null) {
+                    mPlayModeClickListener.onPlayModeClick();
+                }
+
             }
         });
     }
@@ -88,12 +109,58 @@ public class SobPopWindow extends PopupWindow {
         }
     }
 
-    public void setPlayListItemClickListener(PlayListItemClickListener listener){
+    public void setPlayListItemClickListener(PlayListItemClickListener listener) {
         playListAdapter.setOnItemClickListener(listener);
+    }
+
+    /**
+     * 更新播放列表的播放模式
+     *
+     * @param currentMode
+     */
+    public void updatePlayMode(XmPlayListControl.PlayMode currentMode) {
+        updatePlayModeImg(currentMode);
+    }
+
+    /**
+     * 根据当前状态更新播放图标
+     */
+    private void updatePlayModeImg(XmPlayListControl.PlayMode playMode) {
+        int resId = R.drawable.selector_play_mode_list_order;
+        int textId = R.string.play_mode_order_text;
+        switch (playMode) {
+            case PLAY_MODEL_LIST:
+                resId = R.drawable.selector_play_mode_list_order;
+                textId = R.string.play_mode_order_text;
+                break;
+            case PLAY_MODEL_RANDOM:
+                resId = R.drawable.selector_play_mode_random;
+                textId = R.string.play_mode_random_text;
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                resId = R.drawable.selector_play_mode_list_loop;
+                textId = R.string.play_mode_list_play_text;
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                resId = R.drawable.selector_play_mode_single_loop;
+                textId = R.string.play_mode_single_play_text;
+                break;
+        }
+        playModeIv.setImageResource(resId);
+        playModeTv.setText(textId);
+
     }
 
     public interface PlayListItemClickListener {
         void onItemClick(int positon);
+    }
+
+    public void setPlaylistPlayModeClickListener(PlaylistPlayModeClickListener playModeClickListener) {
+        mPlayModeClickListener = playModeClickListener;
+    }
+
+    public interface PlaylistPlayModeClickListener {
+        void onPlayModeClick();
     }
 
 }

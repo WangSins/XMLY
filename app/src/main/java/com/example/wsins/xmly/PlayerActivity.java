@@ -207,12 +207,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         playerModeSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //根据当前的mode获取下一个mode
-                XmPlayListControl.PlayMode playMode = playModeRule.get(currentMode);
-                //修改播放模式
-                if (playerPresenter != null) {
-                    playerPresenter.switchPlayMode(playMode);
-                }
+                switchPlayMode();
             }
         });
         playerList.setOnClickListener(new View.OnClickListener() {
@@ -240,7 +235,23 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
                 }
             }
         });
+        sobPopWindow.setPlaylistPlayModeClickListener(new SobPopWindow.PlaylistPlayModeClickListener() {
+            @Override
+            public void onPlayModeClick() {
+                //切换播放模式
+                switchPlayMode();
+            }
+        });
 
+    }
+
+    private void switchPlayMode() {
+        //根据当前的mode获取下一个mode
+        XmPlayListControl.PlayMode playMode = playModeRule.get(currentMode);
+        //修改播放模式
+        if (playerPresenter != null) {
+            playerPresenter.switchPlayMode(playMode);
+        }
     }
 
     private void initBgAnimation() {
@@ -286,7 +297,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
                 resId = R.drawable.selector_play_mode_list_order;
                 break;
             case PLAY_MODEL_RANDOM:
-                resId = R.drawable.selector_play_mode_pandom;
+                resId = R.drawable.selector_play_mode_random;
                 break;
             case PLAY_MODEL_LIST_LOOP:
                 resId = R.drawable.selector_play_mode_list_loop;
@@ -349,6 +360,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     public void onPlayModeChange(XmPlayListControl.PlayMode playMode) {
         //更新播放模式，并且修改UI
         currentMode = playMode;
+        //更新pop里的播放模式
+        sobPopWindow.updatePlayMode(currentMode);
         updatePlayModeImg();
 
     }
