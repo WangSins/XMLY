@@ -136,7 +136,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             @Override
             public void onClick(View v) {
                 //如果现在状态正在播放就暂停
-                if (playerPresenter.isPlay()) {
+                if (playerPresenter.isPlaying()) {
                     playerPresenter.pause();
                 } else {
                     //非播放就播放
