@@ -60,15 +60,14 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         setContentView(R.layout.activity_detail);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
-
         initView();
-
         //专辑详情presenter
         albumDetailPresenter = AlbumDetailPresenter.getInstance();
         albumDetailPresenter.registerViewCallBack(this);
         //播放器的presenter
         playerPresenter = PlayerPresenter.getPlayerPresenter();
         playerPresenter.registerViewCallBack(this);
+        updatePlayState(playerPresenter.isPlaying());
         initListener();
     }
 
@@ -220,33 +219,36 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         startActivity(intent);
     }
 
+    /**
+     * 根据播放状态修改图标和文字
+     *
+     * @param playing
+     */
+    private void updatePlayState(boolean playing) {
+        if (playControlBtn != null && playControlTips != null) {
+            playControlBtn.setImageResource(playing ?
+                    R.drawable.selector_play_control_pause : R.drawable.selector_play_control_play);
+            playControlTips.setText(playing ?
+                    R.string.playing_tips_text : R.string.pause_tips_text);
+        }
+    }
+
     @Override
     public void onPlayStart() {
         //修改图标为暂停状态，文字修改为正在播放
-        if (playControlBtn != null && playControlTips != null) {
-            playControlBtn.setImageResource(R.drawable.selector_play_control_pause);
-            playControlTips.setText(R.string.playing_tips_text);
-        }
-
+        updatePlayState(true);
     }
 
     @Override
     public void onPlayPause() {
         //修改图标为正在播放，文字修改为已暂停
-        if (playControlBtn != null && playControlTips != null) {
-            playControlBtn.setImageResource(R.drawable.selector_play_control_play);
-            playControlTips.setText(R.string.pause_tips_text);
-        }
-
+        updatePlayState(false);
     }
 
     @Override
     public void onPlayStop() {
         //修改图标为正在播放，文字修改为已暂停
-        if (playControlBtn != null && playControlTips != null) {
-            playControlBtn.setImageResource(R.drawable.selector_play_control_play);
-            playControlTips.setText(R.string.pause_tips_text);
-        }
+        updatePlayState(false);
     }
 
     @Override
