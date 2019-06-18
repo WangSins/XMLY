@@ -52,6 +52,8 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private ImageView playControlBtn;
     private TextView playControlTips;
     private PlayerPresenter playerPresenter;
+    private List<Track> currentTracks = null;
+    private final static int DEFAULT_PLAY_INDEX = 0;
 
     @SuppressLint("NewApi")
     @Override
@@ -76,16 +78,36 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         playControlBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //去控制播放器状态
-                if (playerPresenter.isPlaying()) {
-                    //正在播放就暂停
-                    playerPresenter.pause();
-                } else {
-                    playerPresenter.play();
+                if (playerPresenter != null) {
+                    //判断播放器是否有播放列表
+                    boolean has = playerPresenter.hasPlayList();
+                    if (has) {
+                        //去控制播放器状态
+                        handlePlayControl();
+                    } else {
+                        handleNoPlayList();
+                    }
                 }
             }
         });
 
+    }
+
+    /**
+     * 当播放器里面没有播放内容，我们要进行处理
+     */
+    private void handleNoPlayList() {
+        playerPresenter.setPlayList(currentTracks, DEFAULT_PLAY_INDEX);
+
+    }
+
+    private void handlePlayControl() {
+        if (playerPresenter.isPlaying()) {
+            //正在播放就暂停
+            playerPresenter.pause();
+        } else {
+            playerPresenter.play();
+        }
     }
 
     private void initView() {
@@ -138,6 +160,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
+        this.currentTracks = tracks;
         //判断数据结果，根据结果显示UI
         if (tracks == null && tracks.size() == 0) {
             if (uiLoader != null) {
