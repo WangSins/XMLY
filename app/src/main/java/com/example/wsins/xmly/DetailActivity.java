@@ -8,15 +8,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wsins.xmly.adapters.DetailListAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
+import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
@@ -25,6 +28,9 @@ import com.example.wsins.xmly.utils.ImageBlurMaker;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.RoundRectImageView;
 import com.example.wsins.xmly.views.UILoader;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.bezierlayout.BezierLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
@@ -54,6 +60,8 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private PlayerPresenter playerPresenter;
     private List<Track> currentTracks = null;
     private final static int DEFAULT_PLAY_INDEX = 0;
+    private TwinklingRefreshLayout mRefreshLayout;
+    private String currentTrackTitle;
 
     @SuppressLint("NewApi")
     @Override
@@ -133,11 +141,15 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         //播放控制图标
         playControlBtn = this.findViewById(R.id.detail_play_control);
         playControlTips = this.findViewById(R.id.play_control_tv);
+        playControlTips.setSelected(true);
     }
+
+    private boolean isloaderMore = false;
 
     private View createSuccessView(ViewGroup container) {
         View detailListView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
         detailList = detailListView.findViewById(R.id.album_detail_list);
+        mRefreshLayout = detailListView.findViewById(R.id.refresh_layout);
         //设置布局管理器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         detailList.setLayoutManager(linearLayoutManager);
@@ -155,11 +167,43 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             }
         });
         detailListAdapter.setItemClickListener(this);
+        BezierLayout headerView = new BezierLayout(this);
+        mRefreshLayout.setHeaderView(headerView);
+        mRefreshLayout.setMaxHeadHeight(140);
+        mRefreshLayout.setOverScrollBottomShow(false);
+        mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onRefresh(TwinklingRefreshLayout refreshLayout) {
+                super.onRefresh(refreshLayout);
+                BaseApplication.getHandler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(DetailActivity.this, "刷新成功...", Toast.LENGTH_SHORT).show();
+                        mRefreshLayout.finishRefreshing();
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                super.onLoadMore(refreshLayout);
+                //去加载更多内容
+                if (albumDetailPresenter != null) {
+                    albumDetailPresenter.loadMore();
+                    isloaderMore = true;
+                }
+            }
+        });
         return detailListView;
     }
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
+        if (isloaderMore && mRefreshLayout != null) {
+            mRefreshLayout.finishLoadmore();
+            isloaderMore = false;
+        }
+
         this.currentTracks = tracks;
         //判断数据结果，根据结果显示UI
         if (tracks == null && tracks.size() == 0) {
@@ -251,8 +295,13 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         if (playControlBtn != null && playControlTips != null) {
             playControlBtn.setImageResource(playing ?
                     R.drawable.selector_play_control_pause : R.drawable.selector_play_control_play);
-            playControlTips.setText(playing ?
-                    R.string.playing_tips_text : R.string.pause_tips_text);
+            if (!playing) {
+                playControlTips.setText(R.string.click_play_tips_text);
+            } else {
+                if (!currentTrackTitle.isEmpty()) {
+                    playControlTips.setText(currentTrackTitle);
+                }
+            }
         }
     }
 
@@ -311,6 +360,12 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onTrackUpdate(Track track, int playIndex) {
+        if (track != null) {
+            currentTrackTitle = track.getTrackTitle();
+            if (!TextUtils.isEmpty(currentTrackTitle) && playControlTips != null) {
+                playControlTips.setText(currentTrackTitle);
+            }
+        }
 
     }
 
