@@ -78,6 +78,8 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
                     if (isLoaderMore) {
                         //上拉加载，结果放到前面去
                         mTracks.addAll(tracks);
+                        int size = tracks.size();
+                        handlerLoaderMoreResult(size);
                     } else {
                         //下拉加载更多，结果放到前面去
                         mTracks.addAll(0, tracks);
@@ -95,6 +97,18 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
                 handleError(errorCode, errorMsg);
             }
         });
+    }
+
+    /**
+     * 处理加载更多的结果
+     *
+     * @param size
+     */
+    private void handlerLoaderMoreResult(int size) {
+        for (IAlbumDetailViewCallBack callBack : callBacks) {
+            callBack.onLoaderMoreFinashed(size);
+        }
+
     }
 
     @Override
