@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.wsins.xmly.adapters.IndicatorAdapter;
@@ -41,6 +42,7 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
     private ImageView playControl;
     private View playControlItem;
     private PlayerPresenter playerPresenter;
+    private View searchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,12 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
                 startActivity(new Intent(MainActivity.this, PlayerActivity.class));
             }
         });
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+            }
+        });
 
     }
 
@@ -139,6 +147,10 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
         subTitle = this.findViewById(R.id.main_sub_title);
         playControl = this.findViewById(R.id.main_play_control);
         playControlItem = findViewById(R.id.main_play_control_item);
+
+        //搜索
+        searchBtn = this.findViewById(R.id.search_btn);
+
     }
 
     @Override
