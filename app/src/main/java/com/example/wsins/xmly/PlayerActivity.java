@@ -323,7 +323,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     public void onPlayStart() {
         //开始播放，修改UI层暂停
         if (conttrolBtn != null) {
-            conttrolBtn.setImageResource(R.drawable.selector_player_stop);
+            conttrolBtn.setImageResource(R.drawable.selector_player_pause);
         }
     }
 
@@ -418,6 +418,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
     @Override
     public void onTrackUpdate(Track track, int playIndex) {
+        if (track == null) {
+            LogUtil.d(TAG, "onTrackUpdate -- > track null.");
+            return;
+        }
         this.trackTitleText = track.getTrackTitle();
         if (trackTitleTv != null) {
             //设置当前节目标题

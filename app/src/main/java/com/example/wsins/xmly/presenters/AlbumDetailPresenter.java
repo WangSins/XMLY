@@ -2,21 +2,17 @@ package com.example.wsins.xmly.presenters;
 
 import android.support.annotation.Nullable;
 
-import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
+import com.example.wsins.xmly.api.XimalayApi;
 import com.example.wsins.xmly.interfaces.IAlbumDetailPresenter;
-import com.example.wsins.xmly.utils.Constants;
+import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
 import com.example.wsins.xmly.utils.LogUtil;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.model.track.TrackList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Sin on 2019/1/25
@@ -64,12 +60,8 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
     }
 
     private void doLoaded(final boolean isLoaderMore) {
-        Map<String, String> map = new HashMap<>();
-        map.put(DTransferConstants.ALBUM_ID, currentAlbumId + "");
-        map.put(DTransferConstants.SORT, "asc");
-        map.put(DTransferConstants.PAGE, String.valueOf(currentPageIndex));
-        map.put(DTransferConstants.PAGE_SIZE, String.valueOf(Constants.COUNT_DEFAULT));
-        CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
+        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
+        ximalayApi.getAlbumDetail(new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(@Nullable TrackList trackList) {
                 if (trackList != null) {
@@ -96,7 +88,7 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
                 }
                 handleError(errorCode, errorMsg);
             }
-        });
+        }, currentAlbumId, currentPageIndex);
     }
 
     /**

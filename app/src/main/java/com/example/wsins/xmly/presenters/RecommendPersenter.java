@@ -2,26 +2,23 @@ package com.example.wsins.xmly.presenters;
 
 import android.support.annotation.Nullable;
 
+import com.example.wsins.xmly.api.XimalayApi;
 import com.example.wsins.xmly.interfaces.IRecommendPersenter;
 import com.example.wsins.xmly.interfaces.IRecommendViewCallback;
-import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecommendPersenter implements IRecommendPersenter {
 
     private static final String TAG = "RecommendPersenter";
 
     private List<IRecommendViewCallback> callBacks = new ArrayList<>();
+    private List<Album> currentRecommend = null;
 
     private RecommendPersenter() {
     }
@@ -45,18 +42,24 @@ public class RecommendPersenter implements IRecommendPersenter {
     }
 
     /**
+     * 获取当前的推荐专辑列表
+     *
+     * @return 推荐专辑，使用之前要判空
+     */
+    public List<Album> getCurrentRecommend() {
+        return currentRecommend;
+    }
+
+    /**
      * 获取推荐内容，其实就i是猜你喜欢
      * 这个接口，3.10.6 获取猜你喜欢专辑
      */
     @Override
     public void getRecommendList() {
         //获取推荐内容
-        //封装参数
         updateLoading();
-        Map<String, String> map = new HashMap<String, String>();
-        //这个参数表示一页返回多少条
-        map.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
+        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
+        ximalayApi.getRecommendList(new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(@Nullable GussLikeAlbumList gussLikeAlbumList) {
                 LogUtil.d(TAG, "thread name --> " + Thread.currentThread().getName());
@@ -76,7 +79,6 @@ public class RecommendPersenter implements IRecommendPersenter {
                 handlerError();
             }
         });
-
     }
 
     private void handlerError() {
@@ -100,6 +102,7 @@ public class RecommendPersenter implements IRecommendPersenter {
                 for (IRecommendViewCallback callBack : callBacks) {
                     callBack.onRecommendListLoaded(albumList);
                 }
+                this.currentRecommend = albumList;
             }
         }
 
