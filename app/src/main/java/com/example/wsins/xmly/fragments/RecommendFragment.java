@@ -18,6 +18,7 @@ import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.RecommendPersenter;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.UILoader;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
@@ -32,6 +33,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     private RecommendListAdapter recommendListAdapter;
     private RecommendPersenter recommendPersenter;
     private UILoader uiLoader;
+    private TwinklingRefreshLayout overScrollView;
 
     @Override
     protected View onSubViewLoaded(final LayoutInflater layoutInflater, ViewGroup container) {
@@ -67,6 +69,9 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //Recyclerview的使用
         //1.找出控件
         recommendRv = rootView.findViewById(R.id.recommend_list);
+        overScrollView = rootView.findViewById(R.id.over_scroll_view);
+        overScrollView.setPureScrollModeOn();
+
         //2.设置布局管理器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
