@@ -33,9 +33,9 @@ public class SearchPresenter implements ISearchPresenter {
     public static SearchPresenter searchPresenter = null;
 
     public static SearchPresenter getSearchPresenter() {
-        if (searchPresenter != null) {
+        if (searchPresenter == null) {
             synchronized (SearchPresenter.class) {
-                if (searchPresenter != null) {
+                if (searchPresenter == null) {
                     searchPresenter = new SearchPresenter();
                 }
             }
@@ -92,6 +92,9 @@ public class SearchPresenter implements ISearchPresenter {
                 if (hotWordList != null) {
                     List<HotWord> hotWords = hotWordList.getHotWordList();
                     LogUtil.d(TAG, "hotWords size -- > " + hotWords.size());
+                    for (ISearchCallback callback : callbacks) {
+                        callback.onHotWordLoaded(hotWords);
+                    }
                 }
             }
 

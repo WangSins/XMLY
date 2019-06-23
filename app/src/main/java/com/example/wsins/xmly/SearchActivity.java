@@ -13,10 +13,12 @@ import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.interfaces.ISearchCallback;
 import com.example.wsins.xmly.presenters.SearchPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
+import com.example.wsins.xmly.views.FlowTextLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private View searchBtn;
     private FrameLayout resultContainer;
     private SearchPresenter searchPresenter;
+    private FlowTextLayout flowTextLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +43,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         initPresenter();
     }
 
+
+    private void initPresenter() {
+        searchPresenter = SearchPresenter.getSearchPresenter();
+        //注册UI更新的接口
+        searchPresenter.registerViewCallBack(this);
+        //去拿热词
+        searchPresenter.getHotWord();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -48,12 +60,6 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             searchPresenter.unRegisterViewCallBack(this);
             searchPresenter = null;
         }
-    }
-
-    private void initPresenter() {
-        //注册UI更新的接口
-        searchPresenter = SearchPresenter.getSearchPresenter();
-        searchPresenter.registerViewCallBack(this);
     }
 
     private void initEvent() {
@@ -97,6 +103,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         inputBox = this.findViewById(R.id.search_input);
         searchBtn = this.findViewById(R.id.search_btn);
         resultContainer = this.findViewById(R.id.search_container);
+        flowTextLayout = this.findViewById(R.id.flow_text_layout);
 
     }
 
@@ -107,6 +114,16 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onHotWordLoaded(List<HotWord> hotWordList) {
+        LogUtil.d(TAG, "hotWordList size -- > " + hotWordList.size());
+        List<String> hotWords = new ArrayList<>();
+        hotWords.clear();
+        for (HotWord hotWord : hotWordList) {
+            String searchWord = hotWord.getSearchword();
+            hotWords.add(searchWord);
+        }
+        LogUtil.d(TAG, "hotWords size -- > " + hotWords.size());
+        //更新UI
+        flowTextLayout.setTextContents(hotWords);
 
     }
 
