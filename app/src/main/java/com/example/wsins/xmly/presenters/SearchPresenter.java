@@ -60,6 +60,9 @@ public class SearchPresenter implements ISearchPresenter {
                 List<Album> albums = searchAlbumList.getAlbums();
                 if (albums != null) {
                     LogUtil.d(TAG, "albums size -- > " + albums.size());
+                    for (ISearchCallback callback : callbacks) {
+                        callback.onSearchResultLoaded(albums);
+                    }
                 } else {
                     LogUtil.d(TAG, "albums size is null..");
                 }
@@ -69,7 +72,9 @@ public class SearchPresenter implements ISearchPresenter {
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG, "search errorCode -- > " + errorCode);
                 LogUtil.d(TAG, "search errorMsg -- > " + errorMsg);
-
+                for (ISearchCallback callback : callbacks) {
+                    callback.onError(errorCode, errorMsg);
+                }
             }
         });
     }
@@ -129,13 +134,13 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void registerViewCallBack(ISearchCallback iSearchCallback) {
-        if (callbacks.contains(iSearchCallback)) {
+        if (!callbacks.contains(iSearchCallback)) {
             callbacks.add(iSearchCallback);
         }
     }
 
     @Override
     public void unRegisterViewCallBack(ISearchCallback iSearchCallback) {
-        callbacks.add(iSearchCallback);
+        callbacks.remove(iSearchCallback);
     }
 }

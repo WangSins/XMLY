@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.wsins.xmly.DetailActivity;
 import com.example.wsins.xmly.R;
-import com.example.wsins.xmly.adapters.RecommendListAdapter;
+import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.IRecommendViewCallback;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
@@ -25,12 +25,12 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, RecommendListAdapter.OnRecommendItemClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, AlbumListAdapter.OnRecommendItemClickListener {
 
     private static final String TAG = "RecommendFragment";
     private View rootView;
     private RecyclerView recommendRv;
-    private RecommendListAdapter recommendListAdapter;
+    private AlbumListAdapter recommendListAdapter;
     private RecommendPersenter recommendPersenter;
     private UILoader uiLoader;
     private TwinklingRefreshLayout overScrollView;
@@ -86,7 +86,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
             }
         });
         //3.设置适配器
-        recommendListAdapter = new RecommendListAdapter();
+        recommendListAdapter = new AlbumListAdapter();
         recommendRv.setAdapter(recommendListAdapter);
         recommendListAdapter.setOnRecommendItemClickListener(this);
         return rootView;
