@@ -1,9 +1,10 @@
 package com.example.wsins.xmly;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -15,16 +16,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.interfaces.ISearchCallback;
 import com.example.wsins.xmly.presenters.SearchPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
+import com.example.wsins.xmly.views.FlowTextLayout;
 import com.example.wsins.xmly.views.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
+
+import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +49,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private UILoader uiLoader;
     private RecyclerView resultListview;
     private AlbumListAdapter albumListAdapter;
-    //    private FlowTextLayout flowTextLayout;
+    private FlowTextLayout recommendHotWordView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -120,12 +125,12 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 }
             }
         });
-//        flowTextLayout.setClickListener(new FlowTextLayout.ItemClickListener() {
-//            @Override
-//            public void onItemClick(String text) {
-//                Toast.makeText(SearchActivity.this, text, Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        recommendHotWordView.setClickListener(new FlowTextLayout.ItemClickListener() {
+            @Override
+            public void onItemClick(String text) {
+                Toast.makeText(SearchActivity.this, text, Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -157,6 +162,9 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
      */
     private View createSuccessView() {
         View resultView = LayoutInflater.from(this).inflate(R.layout.search_result_layout, null);
+        //显示热词
+        recommendHotWordView = resultView.findViewById(R.id.recommend_hot_word_view);
+
         resultListview = resultView.findViewById(R.id.result_list_view);
         //设置布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -164,11 +172,23 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         //设置适配器
         albumListAdapter = new AlbumListAdapter();
         resultListview.setAdapter(albumListAdapter);
+        //设置间距
+        resultListview.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.top = UIUtil.dip2px(view.getContext(), 5);
+                outRect.bottom = UIUtil.dip2px(view.getContext(), 5);
+                outRect.left = UIUtil.dip2px(view.getContext(), 5);
+                outRect.right = UIUtil.dip2px(view.getContext(), 5);
+            }
+        });
         return resultView;
     }
 
     @Override
     public void onSearchResultLoaded(List<Album> result) {
+        resultListview.setVisibility(View.VISIBLE);
+        recommendHotWordView.setVisibility(View.GONE);
         //隐藏软键盘
         InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(inputBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -189,6 +209,11 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onHotWordLoaded(List<HotWord> hotWordList) {
+        resultListview.setVisibility(View.GONE);
+        recommendHotWordView.setVisibility(View.VISIBLE);
+        if (uiLoader != null) {
+            uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
+        }
         LogUtil.d(TAG, "hotWordList size -- > " + hotWordList.size());
         List<String> hotWords = new ArrayList<>();
         hotWords.clear();
@@ -199,7 +224,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         LogUtil.d(TAG, "hotWords size -- > " + hotWords.size());
         Collections.sort(hotWords);
         //更新UI
-//        flowTextLayout.setTextContents(hotWords);
+        recommendHotWordView.setTextContents(hotWords);
 
     }
 
