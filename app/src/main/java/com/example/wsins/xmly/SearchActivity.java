@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
@@ -50,6 +50,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private RecyclerView resultListview;
     private AlbumListAdapter albumListAdapter;
     private FlowTextLayout recommendHotWordView;
+    private InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +63,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
 
     private void initPresenter() {
+        inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         searchPresenter = SearchPresenter.getSearchPresenter();
         //注册UI更新的接口
         searchPresenter.registerViewCallBack(this);
@@ -105,10 +108,9 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                LogUtil.d(TAG, "uiLoader -- > " + s);
-                LogUtil.d(TAG, "start -- > " + start);
-                LogUtil.d(TAG, "before -- > " + before);
-                LogUtil.d(TAG, "count -- > " + count);
+                if (TextUtils.isEmpty(s)) {
+                    searchPresenter.getHotWord();
+                }
             }
 
             @Override
@@ -130,6 +132,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             public void onItemClick(String text) {
                 //第一步，把热词扔到输入框
                 inputBox.setText(text);
+                inputBox.setSelection(text.length());
                 //第二步，发起搜索
                 if (searchPresenter != null) {
                     searchPresenter.doSearch(text);
@@ -146,6 +149,13 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private void initView() {
         backBtn = this.findViewById(R.id.search_back);
         inputBox = this.findViewById(R.id.search_input);
+        inputBox.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                inputBox.requestFocus();
+                inputMethodManager.showSoftInput(inputBox,InputMethodManager.SHOW_IMPLICIT);
+            }
+        },500);
         searchBtn = this.findViewById(R.id.search_btn);
         resultContainer = this.findViewById(R.id.search_container);
 //        flowTextLayout = this.findViewById(R.id.flow_text_layout);
@@ -199,7 +209,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         resultListview.setVisibility(View.VISIBLE);
         recommendHotWordView.setVisibility(View.GONE);
         //隐藏软键盘
-        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         inputMethodManager.hideSoftInputFromWindow(inputBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         if (result != null) {
             if (result.size() == 0) {
