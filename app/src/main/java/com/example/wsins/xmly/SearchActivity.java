@@ -128,7 +128,16 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         recommendHotWordView.setClickListener(new FlowTextLayout.ItemClickListener() {
             @Override
             public void onItemClick(String text) {
-                Toast.makeText(SearchActivity.this, text, Toast.LENGTH_SHORT).show();
+                //第一步，把热词扔到输入框
+                inputBox.setText(text);
+                //第二步，发起搜索
+                if (searchPresenter != null) {
+                    searchPresenter.doSearch(text);
+                }
+                //改变UI状态
+                if (uiLoader != null) {
+                    uiLoader.updateStatus(UILoader.UIStatus.LOADING);
+                }
             }
         });
 
