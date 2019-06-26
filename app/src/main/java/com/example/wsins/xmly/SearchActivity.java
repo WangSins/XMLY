@@ -51,6 +51,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private AlbumListAdapter albumListAdapter;
     private FlowTextLayout recommendHotWordView;
     private InputMethodManager inputMethodManager;
+    private ImageView delBtn;
+    public static final int TIME_SHOW_IMM = 500;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,12 +112,21 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (TextUtils.isEmpty(s)) {
                     searchPresenter.getHotWord();
+                    delBtn.setVisibility(View.GONE);
+                } else {
+                    delBtn.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        delBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputBox.setText("");
             }
         });
         uiLoader.setOnRetryClickListener(new UILoader.OnRetryClickListener() {
@@ -144,21 +155,22 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             }
         });
 
+
     }
 
     private void initView() {
         backBtn = this.findViewById(R.id.search_back);
         inputBox = this.findViewById(R.id.search_input);
+        delBtn = this.findViewById(R.id.search_input_delete);
         inputBox.postDelayed(new Runnable() {
             @Override
             public void run() {
                 inputBox.requestFocus();
-                inputMethodManager.showSoftInput(inputBox,InputMethodManager.SHOW_IMPLICIT);
+                inputMethodManager.showSoftInput(inputBox, InputMethodManager.SHOW_IMPLICIT);
             }
-        },500);
+        }, TIME_SHOW_IMM);
         searchBtn = this.findViewById(R.id.search_btn);
         resultContainer = this.findViewById(R.id.search_container);
-//        flowTextLayout = this.findViewById(R.id.flow_text_layout);
         if (uiLoader == null) {
             uiLoader = new UILoader(this) {
                 @Override
