@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.adapters.SearchRecommendAdapter;
@@ -26,6 +27,8 @@ import com.example.wsins.xmly.presenters.SearchPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.FlowTextLayout;
 import com.example.wsins.xmly.views.UILoader;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
@@ -56,6 +59,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     public static final int TIME_SHOW_IMM = 500;
     private RecyclerView searchRecommendList;
     private SearchRecommendAdapter recommendAdapter;
+    private TwinklingRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,6 +162,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 }
             });
         }
+        refreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                //加载更多的内容
+                if (searchPresenter != null) {
+                    searchPresenter.loadMore();
+                }
+            }
+        });
 
     }
 
@@ -222,6 +235,9 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
      */
     private View createSuccessView() {
         View resultView = LayoutInflater.from(this).inflate(R.layout.search_result_layout, null);
+        //刷新控件
+        refreshLayout = resultView.findViewById(R.id.search_result_refresh_layout);
+        refreshLayout.setOverScrollBottomShow(false);
         //显示热词
         recommendHotWordView = resultView.findViewById(R.id.recommend_hot_word_view);
 
@@ -265,10 +281,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onSearchResultLoaded(List<Album> result) {
-        hideSuccessView();
-        resultListView.setVisibility(View.VISIBLE);
+        handleSearchResult(result);
         //隐藏软键盘
         inputMethodManager.hideSoftInputFromWindow(inputBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+    }
+
+    private void handleSearchResult(List<Album> result) {
+        hideSuccessView();
+        refreshLayout.setVisibility(View.VISIBLE);
         if (result != null) {
             if (result.size() == 0) {
                 //数据为空
@@ -280,7 +301,6 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 albumListAdapter.setDate(result);
                 uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
             }
-
         }
     }
 
@@ -307,7 +327,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onLoadMoreResult(List<Album> result, boolean isOkay) {
-
+        //处理加载更多的结果
+        if (refreshLayout != null) {
+            refreshLayout.finishLoadmore();
+        }
+        if (isOkay) {
+            handleSearchResult(result);
+        } else {
+            Toast.makeText(SearchActivity.this, "没有更多内容", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -336,7 +364,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     private void hideSuccessView() {
         searchRecommendList.setVisibility(View.GONE);
-        resultListView.setVisibility(View.GONE);
+        refreshLayout.setVisibility(View.GONE);
         recommendHotWordView.setVisibility(View.GONE);
     }
 
