@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
+import com.example.wsins.xmly.adapters.SearchRecommendAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.interfaces.ISearchCallback;
 import com.example.wsins.xmly.presenters.SearchPresenter;
@@ -47,12 +48,14 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private FrameLayout resultContainer;
     private SearchPresenter searchPresenter;
     private UILoader uiLoader;
-    private RecyclerView resultListview;
+    private RecyclerView resultListView;
     private AlbumListAdapter albumListAdapter;
     private FlowTextLayout recommendHotWordView;
     private InputMethodManager inputMethodManager;
     private ImageView delBtn;
     public static final int TIME_SHOW_IMM = 500;
+    private RecyclerView searchRecommendList;
+    private SearchRecommendAdapter recommendAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,6 +118,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                     delBtn.setVisibility(View.GONE);
                 } else {
                     delBtn.setVisibility(View.VISIBLE);
+                    //触发联想查询
+                    getSuggestWord(s.toString());
                 }
             }
 
@@ -158,6 +163,18 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     }
 
+    /**
+     * 获取联想的关键词
+     *
+     * @param keyword
+     */
+    private void getSuggestWord(String keyword) {
+        LogUtil.d(TAG, "getSuggestWord -- > " + keyword);
+        if (searchPresenter != null) {
+            searchPresenter.getRecommendWord(keyword);
+        }
+    }
+
     private void initView() {
         backBtn = this.findViewById(R.id.search_back);
         inputBox = this.findViewById(R.id.search_input);
@@ -196,15 +213,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         //显示热词
         recommendHotWordView = resultView.findViewById(R.id.recommend_hot_word_view);
 
-        resultListview = resultView.findViewById(R.id.result_list_view);
+        resultListView = resultView.findViewById(R.id.result_list_view);
         //设置布局管理器
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        resultListview.setLayoutManager(layoutManager);
+        LinearLayoutManager resultLayoutManager = new LinearLayoutManager(this);
+        resultListView.setLayoutManager(resultLayoutManager);
         //设置适配器
         albumListAdapter = new AlbumListAdapter();
-        resultListview.setAdapter(albumListAdapter);
+        resultListView.setAdapter(albumListAdapter);
         //设置间距
-        resultListview.addItemDecoration(new RecyclerView.ItemDecoration() {
+        resultListView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 outRect.top = UIUtil.dip2px(view.getContext(), 5);
@@ -213,15 +230,23 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 outRect.right = UIUtil.dip2px(view.getContext(), 5);
             }
         });
+        //搜索推荐
+        searchRecommendList = resultView.findViewById(R.id.search_recommend_list);
+        //设置布局管理器
+        LinearLayoutManager recommendLayoutManager = new LinearLayoutManager(this);
+        searchRecommendList.setLayoutManager(recommendLayoutManager);
+        //设置适配器
+        recommendAdapter = new SearchRecommendAdapter();
+        searchRecommendList.setAdapter(recommendAdapter);
+
         return resultView;
     }
 
     @Override
     public void onSearchResultLoaded(List<Album> result) {
-        resultListview.setVisibility(View.VISIBLE);
-        recommendHotWordView.setVisibility(View.GONE);
+        hideSuccessView();
+        resultListView.setVisibility(View.VISIBLE);
         //隐藏软键盘
-
         inputMethodManager.hideSoftInputFromWindow(inputBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         if (result != null) {
             if (result.size() == 0) {
@@ -240,7 +265,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onHotWordLoaded(List<HotWord> hotWordList) {
-        resultListview.setVisibility(View.GONE);
+        hideSuccessView();
         recommendHotWordView.setVisibility(View.VISIBLE);
         if (uiLoader != null) {
             uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
@@ -266,6 +291,18 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onRecommendWordLoaded(List<QueryResult> keyWordList) {
+        //关键字的联想词
+        LogUtil.d(TAG, "keyWordList size -- > " + keyWordList.size());
+        if (recommendAdapter != null) {
+            recommendAdapter.setData(keyWordList);
+        }
+        //控制UI的状态和隐藏显示
+        if (uiLoader != null) {
+            uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
+        }
+        //控制显示和隐藏
+        hideSuccessView();
+        searchRecommendList.setVisibility(View.VISIBLE);
 
     }
 
@@ -274,6 +311,12 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         if (uiLoader != null) {
             uiLoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
         }
+    }
+
+    private void hideSuccessView() {
+        searchRecommendList.setVisibility(View.GONE);
+        resultListView.setVisibility(View.GONE);
+        recommendHotWordView.setVisibility(View.GONE);
     }
 
 }

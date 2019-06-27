@@ -12,6 +12,15 @@
 
     </android.support.v7.widget.RecyclerView>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_recommend_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
+
     <com.example.wsins.xmly.views.FlowTextLayout
         android:id="@+id/recommend_hot_word_view"
         android:layout_width="match_parent"
