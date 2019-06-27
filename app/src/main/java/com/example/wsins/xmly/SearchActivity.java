@@ -146,21 +146,33 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         recommendHotWordView.setClickListener(new FlowTextLayout.ItemClickListener() {
             @Override
             public void onItemClick(String text) {
-                //第一步，把热词扔到输入框
-                inputBox.setText(text);
-                inputBox.setSelection(text.length());
-                //第二步，发起搜索
-                if (searchPresenter != null) {
-                    searchPresenter.doSearch(text);
-                }
-                //改变UI状态
-                if (uiLoader != null) {
-                    uiLoader.updateStatus(UILoader.UIStatus.LOADING);
-                }
+                swich2Search(text);
             }
         });
+        if (recommendAdapter != null) {
+            recommendAdapter.setItemClickListener(new SearchRecommendAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick(String keyword) {
+                    LogUtil.d(TAG, "recommendAdapter keyword -- > " + keyword);
+                    swich2Search(keyword);
+                }
+            });
+        }
 
+    }
 
+    private void swich2Search(String text) {
+        //第一步，把热词扔到输入框
+        inputBox.setText(text);
+        inputBox.setSelection(text.length());
+        //第二步，发起搜索
+        if (searchPresenter != null) {
+            searchPresenter.doSearch(text);
+        }
+        //改变UI状态
+        if (uiLoader != null) {
+            uiLoader.updateStatus(UILoader.UIStatus.LOADING);
+        }
     }
 
     /**
@@ -238,7 +250,16 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         //设置适配器
         recommendAdapter = new SearchRecommendAdapter();
         searchRecommendList.setAdapter(recommendAdapter);
-
+        //设置间距
+        searchRecommendList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.top = UIUtil.dip2px(view.getContext(), 2);
+                outRect.bottom = UIUtil.dip2px(view.getContext(), 2);
+                outRect.left = UIUtil.dip2px(view.getContext(), 5);
+                outRect.right = UIUtil.dip2px(view.getContext(), 5);
+            }
+        });
         return resultView;
     }
 
