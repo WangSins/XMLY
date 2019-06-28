@@ -1,6 +1,7 @@
 package com.example.wsins.xmly;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.adapters.SearchRecommendAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.interfaces.ISearchCallback;
+import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.SearchPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.FlowTextLayout;
@@ -42,7 +44,7 @@ import java.util.List;
 /**
  * Created by Sin on 2019/6/22
  */
-public class SearchActivity extends BaseActivity implements ISearchCallback {
+public class SearchActivity extends BaseActivity implements ISearchCallback, AlbumListAdapter.OnRecommendItemClickListener {
 
     private static final String TAG = "SearchActivity";
     private ImageView backBtn;
@@ -171,6 +173,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 }
             }
         });
+        albumListAdapter.setOnRecommendItemClickListener(this);
 
     }
 
@@ -237,7 +240,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         View resultView = LayoutInflater.from(this).inflate(R.layout.search_result_layout, null);
         //刷新控件
         refreshLayout = resultView.findViewById(R.id.search_result_refresh_layout);
-        refreshLayout.setOverScrollBottomShow(false);
+        refreshLayout.setEnableRefresh(false);
         //显示热词
         recommendHotWordView = resultView.findViewById(R.id.recommend_hot_word_view);
 
@@ -368,4 +371,11 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         recommendHotWordView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onItemClick(int position, Album album) {
+        AlbumDetailPresenter.getInstance().setTargetAlbum(album);
+        //item被点击了，跳转到详情页面
+        Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
+        startActivity(intent);
+    }
 }
