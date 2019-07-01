@@ -22,8 +22,10 @@ import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
+import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
+import com.example.wsins.xmly.presenters.SubscriptionPresenter;
 import com.example.wsins.xmly.utils.ImageBlurMaker;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.RoundRectImageView;
@@ -41,7 +43,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallBack, UILoader.OnRetryClickListener, DetailListAdapter.ItemClickListener, IPlayerCallBack {
+public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallBack, UILoader.OnRetryClickListener, DetailListAdapter.ItemClickListener, IPlayerCallBack, ISubscriptionCallback {
 
     private static final String TAG = "DetailActivity";
     private ImageView largeCover;
@@ -62,6 +64,9 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private final static int DEFAULT_PLAY_INDEX = 0;
     private TwinklingRefreshLayout mRefreshLayout;
     private String currentTrackTitle;
+    private TextView subBtn;
+    private SubscriptionPresenter subscriptionPresenter;
+    private Album currentAlbum;
 
     @SuppressLint("NewApi")
     @Override
@@ -71,14 +76,45 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         initView();
+        initPresenter();
+        //设置订阅按钮状态
+        updateSubState();
+        updatePlayState(playerPresenter.isPlaying());
+        initListener();
+    }
+
+    private void updateSubState() {
+        if (subscriptionPresenter != null) {
+            boolean isSubscription = subscriptionPresenter.isSubscription(currentAlbum);
+            subBtn.setText(isSubscription ? R.string.cancel_sub_tips_text : R.string.sub_tips_text);
+        }
+    }
+
+    private void initPresenter() {
         //专辑详情presenter
         albumDetailPresenter = AlbumDetailPresenter.getInstance();
         albumDetailPresenter.registerViewCallBack(this);
         //播放器的presenter
         playerPresenter = PlayerPresenter.getPlayerPresenter();
         playerPresenter.registerViewCallBack(this);
-        updatePlayState(playerPresenter.isPlaying());
-        initListener();
+        //订阅相关的Presenter
+        subscriptionPresenter = SubscriptionPresenter.getsInstance();
+        subscriptionPresenter.getSubscriptionList();
+        subscriptionPresenter.registerViewCallBack(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (albumDetailPresenter != null) {
+            albumDetailPresenter.unRegisterViewCallBack(this);
+        }
+        if (playerPresenter != null) {
+            playerPresenter.unRegisterViewCallBack(this);
+        }
+        if (subscriptionPresenter != null) {
+            subscriptionPresenter.unRegisterViewCallBack(this);
+        }
     }
 
     private void initListener() {
@@ -94,6 +130,20 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
                         handlePlayControl();
                     } else {
                         handleNoPlayList();
+                    }
+                }
+            }
+        });
+        subBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (subscriptionPresenter != null) {
+                    boolean isSubscription = subscriptionPresenter.isSubscription(currentAlbum);
+                    //如果没有订阅，就去订阅；如果已经订阅了，就取消
+                    if (isSubscription) {
+                        subscriptionPresenter.deleteSubscription(currentAlbum);
+                    } else {
+                        subscriptionPresenter.addSubscription(currentAlbum);
                     }
                 }
             }
@@ -142,6 +192,10 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         playControlBtn = this.findViewById(R.id.detail_play_control);
         playControlTips = this.findViewById(R.id.play_control_tv);
         playControlTips.setSelected(true);
+
+        //
+        subBtn = this.findViewById(R.id.detail_sub_btn);
+
     }
 
     private boolean isloaderMore = false;
@@ -228,7 +282,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onAlbumLoaded(Album album) {
-
+        this.currentAlbum = album;
         long id = album.getId();
         currentId = id;
 
@@ -387,5 +441,35 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     @Override
     public void updateListOrder(boolean isReverse) {
 
+    }
+
+    @Override
+    public void onAddResult(boolean isSuccess) {
+        if (isSuccess) {
+            //如果成功了，那就修改UI
+            subBtn.setText(R.string.cancel_sub_tips_text);
+        }
+        //给个Toast
+        String tipsText = isSuccess ? "订阅成功" : "订阅失败";
+        Toast.makeText(this, tipsText, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDeleteResult(boolean isSuccess) {
+        if (isSuccess) {
+            //如果成功了，那就修改UI
+            subBtn.setText(R.string.sub_tips_text);
+        }
+        //给个Toast
+        String tipsText = isSuccess ? "删除成功" : "删除失败";
+        Toast.makeText(this, tipsText, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSubscriptionsLoaded(List<Album> albums) {
+        //在这个界面不需要处理
+        for (Album album : albums) {
+            LogUtil.d(TAG, "album -- > " + album.getAlbumTitle());
+        }
     }
 }

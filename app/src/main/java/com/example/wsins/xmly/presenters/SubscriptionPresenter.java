@@ -5,6 +5,7 @@ import com.example.wsins.xmly.data.ISubDaoCallback;
 import com.example.wsins.xmly.data.SubscriptionDao;
 import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
 import com.example.wsins.xmly.interfaces.ISubscriptionPresenter;
+import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCallback {
 
+    private static final String TAG = "SubscriptionPresenter";
     private final SubscriptionDao subscriptionDao;
     private Map<Long, Album> datas = new HashMap<>();
     private List<ISubscriptionCallback> callbacks = new ArrayList<>();
@@ -29,7 +31,6 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     private SubscriptionPresenter() {
         subscriptionDao = SubscriptionDao.getInstance();
         subscriptionDao.setCallback(this);
-        listSubscriptions();
     }
 
     private void listSubscriptions() {
@@ -46,7 +47,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     private static SubscriptionPresenter sInstance = null;
 
-    private SubscriptionPresenter getsInstance() {
+    public static SubscriptionPresenter getsInstance() {
         if (sInstance == null) {
             synchronized (SubscriptionPresenter.class) {
                 if (sInstance == null) {
@@ -89,7 +90,8 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     @Override
     public boolean isSubscription(Album album) {
         Album result = datas.get(album.getId());
-        return result == null;
+        //不为空，表示已经订阅
+        return result != null;
     }
 
     @Override
@@ -106,10 +108,13 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     @Override
     public void onAddResult(final boolean isSuccess) {
+        LogUtil.d(TAG, "listSubscriptions after add...");
+        listSubscriptions();
         //添加结果的回调
         BaseApplication.getHandler().post(new Runnable() {
             @Override
             public void run() {
+                LogUtil.d(TAG, "update ui for add result.");
                 for (ISubscriptionCallback callback : callbacks) {
                     callback.onAddResult(isSuccess);
                 }
@@ -119,6 +124,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     @Override
     public void onDelResult(final boolean isSuccess) {
+        listSubscriptions();
         //删除订阅的回调
         BaseApplication.getHandler().post(new Runnable() {
             @Override
@@ -133,6 +139,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     @Override
     public void onSubListLoaded(final List<Album> result) {
         //加载数据的回调
+        datas.clear();
         for (Album album : result) {
             datas.put(album.getId(), album);
         }
