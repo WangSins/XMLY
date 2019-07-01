@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.example.wsins.xmly.api.XimalayApi;
+import com.example.wsins.xmly.data.XimalayaApi;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
 import com.example.wsins.xmly.interfaces.IPlayerPresenter;
@@ -247,8 +247,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void playByAlbumId(long id) {
         //1.获取到专辑的列表内容
-        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
-        ximalayApi.getAlbumDetail(new IDataCallBack<TrackList>() {
+        XimalayaApi ximalayaApi = XimalayaApi.getXimalayaApi();
+        ximalayaApi.getAlbumDetail(new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(@Nullable TrackList trackList) {
                 List<Track> tracks = trackList.getTracks();
@@ -274,6 +274,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void registerViewCallBack(IPlayerCallBack iPlayerCallBack) {
+        if (!iPlayerCallBacks.contains(iPlayerCallBack)) {
+            iPlayerCallBacks.add(iPlayerCallBack);
+        }
+        //更新之前，让UI的Pager有数据
+        getPlayList();
         //通知当前的节目
         iPlayerCallBack.onTrackUpdate(currentTrack, currentIndex);
         iPlayerCallBack.onProgressChange(currentProgressPosition, progressDuration);
@@ -283,10 +288,6 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         int modeIndex = playModeSP.getInt(PLAY_MODE_SP_KEY, PLAY_MODEL_LIST_INT);
         currentPlayMode = getPlayModeByInt(modeIndex);
         iPlayerCallBack.onPlayModeChange(currentPlayMode);
-        if (!iPlayerCallBacks.contains(iPlayerCallBack)) {
-            iPlayerCallBacks.add(iPlayerCallBack);
-        }
-
     }
 
     private void handlerPlayStatus(IPlayerCallBack iPlayerCallBack) {

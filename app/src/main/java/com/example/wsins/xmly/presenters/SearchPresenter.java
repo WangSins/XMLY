@@ -2,7 +2,7 @@ package com.example.wsins.xmly.presenters;
 
 import android.support.annotation.Nullable;
 
-import com.example.wsins.xmly.api.XimalayApi;
+import com.example.wsins.xmly.data.XimalayaApi;
 import com.example.wsins.xmly.interfaces.ISearchCallback;
 import com.example.wsins.xmly.interfaces.ISearchPresenter;
 import com.example.wsins.xmly.utils.Constants;
@@ -23,13 +23,13 @@ public class SearchPresenter implements ISearchPresenter {
     private static final String TAG = "SearchPresenter";
     //当前搜索关键字
     private String currentKeyword = null;
-    private XimalayApi ximalayApi;
+    private XimalayaApi ximalayaApi;
     private static final int DEFAULT_PAGE = 1;
     private int currentPage = DEFAULT_PAGE;
     private List<Album> searchResult = new ArrayList<>();
 
     private SearchPresenter() {
-        ximalayApi = XimalayApi.getXimalayApi();
+        ximalayaApi = XimalayaApi.getXimalayaApi();
     }
 
     public static SearchPresenter searchPresenter = null;
@@ -58,7 +58,7 @@ public class SearchPresenter implements ISearchPresenter {
     }
 
     private void search(String keyword) {
-        ximalayApi.searchByKeyWord(keyword, currentPage, new IDataCallBack<SearchAlbumList>() {
+        ximalayaApi.searchByKeyWord(keyword, currentPage, new IDataCallBack<SearchAlbumList>() {
             @Override
             public void onSuccess(@Nullable SearchAlbumList searchAlbumList) {
                 List<Album> albums = searchAlbumList.getAlbums();
@@ -120,7 +120,7 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void getHotWord() {
-        ximalayApi.getHotWords(new IDataCallBack<HotWordList>() {
+        ximalayaApi.getHotWords(new IDataCallBack<HotWordList>() {
             @Override
             public void onSuccess(@Nullable HotWordList hotWordList) {
                 if (hotWordList != null) {
@@ -143,7 +143,7 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void getRecommendWord(String keyword) {
-        ximalayApi.getSuggestWord(keyword, new IDataCallBack<SuggestWords>() {
+        ximalayaApi.getSuggestWord(keyword, new IDataCallBack<SuggestWords>() {
             @Override
             public void onSuccess(@Nullable SuggestWords suggestWords) {
                 if (suggestWords != null) {

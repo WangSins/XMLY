@@ -1,4 +1,4 @@
-package com.example.wsins.xmly.api;
+package com.example.wsins.xmly.data;
 
 import com.example.wsins.xmly.utils.Constants;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
@@ -16,22 +16,22 @@ import java.util.Map;
 /**
  * Created by Sin on 2019/6/22
  */
-public class XimalayApi {
+public class XimalayaApi {
 
-    private XimalayApi() {
+    private XimalayaApi() {
     }
 
-    public static XimalayApi ximalayApi;
+    public static XimalayaApi ximalayaApi;
 
-    public static XimalayApi getXimalayApi() {
-        if (ximalayApi == null) {
-            synchronized (XimalayApi.class) {
-                if (ximalayApi == null) {
-                    ximalayApi = new XimalayApi();
+    public static XimalayaApi getXimalayaApi() {
+        if (ximalayaApi == null) {
+            synchronized (XimalayaApi.class) {
+                if (ximalayaApi == null) {
+                    ximalayaApi = new XimalayaApi();
                 }
             }
         }
-        return ximalayApi;
+        return ximalayaApi;
     }
 
     /**

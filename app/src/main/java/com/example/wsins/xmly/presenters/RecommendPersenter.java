@@ -2,7 +2,7 @@ package com.example.wsins.xmly.presenters;
 
 import android.support.annotation.Nullable;
 
-import com.example.wsins.xmly.api.XimalayApi;
+import com.example.wsins.xmly.data.XimalayaApi;
 import com.example.wsins.xmly.interfaces.IRecommendPersenter;
 import com.example.wsins.xmly.interfaces.IRecommendViewCallback;
 import com.example.wsins.xmly.utils.LogUtil;
@@ -58,8 +58,8 @@ public class RecommendPersenter implements IRecommendPersenter {
     public void getRecommendList() {
         //获取推荐内容
         updateLoading();
-        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
-        ximalayApi.getRecommendList(new IDataCallBack<GussLikeAlbumList>() {
+        XimalayaApi ximalayaApi = XimalayaApi.getXimalayaApi();
+        ximalayaApi.getRecommendList(new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(@Nullable GussLikeAlbumList gussLikeAlbumList) {
                 LogUtil.d(TAG, "thread name --> " + Thread.currentThread().getName());

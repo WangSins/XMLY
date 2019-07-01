@@ -2,7 +2,7 @@ package com.example.wsins.xmly.presenters;
 
 import android.support.annotation.Nullable;
 
-import com.example.wsins.xmly.api.XimalayApi;
+import com.example.wsins.xmly.data.XimalayaApi;
 import com.example.wsins.xmly.interfaces.IAlbumDetailPresenter;
 import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
 import com.example.wsins.xmly.utils.LogUtil;
@@ -60,8 +60,8 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
     }
 
     private void doLoaded(final boolean isLoaderMore) {
-        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
-        ximalayApi.getAlbumDetail(new IDataCallBack<TrackList>() {
+        XimalayaApi ximalayaApi = XimalayaApi.getXimalayaApi();
+        ximalayaApi.getAlbumDetail(new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(@Nullable TrackList trackList) {
                 if (trackList != null) {
