@@ -1,5 +1,6 @@
 package com.example.wsins.xmly.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.wsins.xmly.DetailActivity;
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
+import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.SubscriptionPresenter;
 import com.example.wsins.xmly.utils.Constants;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
@@ -22,7 +25,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback {
+public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnRecommendItemClickListener {
 
     private SubscriptionPresenter subscriptionPresenter;
     private TwinklingRefreshLayout overScrollView;
@@ -49,8 +52,8 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
             }
         });
         albumListAdapter = new AlbumListAdapter();
+        albumListAdapter.setOnAlbumItemClickListener(this);
         subListView.setAdapter(albumListAdapter);
-
         subscriptionPresenter = SubscriptionPresenter.getsInstance();
         subscriptionPresenter.registerViewCallBack(this);
         subscriptionPresenter.getSubscriptionList();
@@ -88,5 +91,14 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         if (subscriptionPresenter != null) {
             subscriptionPresenter.unRegisterViewCallBack(this);
         }
+        albumListAdapter.setOnAlbumItemClickListener(null);
+    }
+
+    @Override
+    public void onItemClick(int position, Album album) {
+        AlbumDetailPresenter.getInstance().setTargetAlbum(album);
+        //item被点击了，跳转到详情页面
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
     }
 }

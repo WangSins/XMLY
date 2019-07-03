@@ -183,7 +183,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
                 }
             }
         });
-        albumListAdapter.setOnRecommendItemClickListener(this);
+        albumListAdapter.setOnAlbumItemClickListener(this);
 
     }
 
