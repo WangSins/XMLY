@@ -5,6 +5,7 @@ import com.example.wsins.xmly.data.ISubDaoCallback;
 import com.example.wsins.xmly.data.SubscriptionDao;
 import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
 import com.example.wsins.xmly.interfaces.ISubscriptionPresenter;
+import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -60,6 +61,14 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     @Override
     public void addSubscription(final Album album) {
+        //判断当前订阅数量，不超过100
+        if (datas.size() >= Constants.MAX_SUB_COUNT) {
+            //给出提示
+            for (ISubscriptionCallback callback : callbacks) {
+                callback.onSubFull();
+            }
+            return;
+        }
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
             public void subscribe(ObservableEmitter<Object> emitter) throws Exception {

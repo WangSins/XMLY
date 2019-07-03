@@ -7,12 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
 import com.example.wsins.xmly.presenters.SubscriptionPresenter;
+import com.example.wsins.xmly.utils.Constants;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -70,6 +72,21 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         //更新UI
         if (albumListAdapter != null) {
             albumListAdapter.setDate(albums);
+        }
+    }
+
+    @Override
+    public void onSubFull() {
+        //弹出Toast提示
+        Toast.makeText(getActivity(), "订阅数量不得超过" + Constants.MAX_SUB_COUNT, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //取消接口的注册
+        if (subscriptionPresenter != null) {
+            subscriptionPresenter.unRegisterViewCallBack(this);
         }
     }
 }

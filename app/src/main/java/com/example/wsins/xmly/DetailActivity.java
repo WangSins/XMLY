@@ -26,6 +26,7 @@ import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
 import com.example.wsins.xmly.presenters.SubscriptionPresenter;
+import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.ImageBlurMaker;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.RoundRectImageView;
@@ -471,5 +472,11 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         for (Album album : albums) {
             LogUtil.d(TAG, "album -- > " + album.getAlbumTitle());
         }
+    }
+
+    @Override
+    public void onSubFull() {
+        //弹出Toast提示
+        Toast.makeText(this, "订阅数量不得超过" + Constants.MAX_SUB_COUNT, Toast.LENGTH_SHORT).show();
     }
 }
