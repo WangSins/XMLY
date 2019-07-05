@@ -18,6 +18,7 @@ import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.SubscriptionPresenter;
 import com.example.wsins.xmly.utils.Constants;
+import com.example.wsins.xmly.views.ConfirmDialog;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -25,7 +26,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnRecommendItemClickListener {
+public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnAlbumItemClickListener, AlbumListAdapter.OnAlbumItemLongClickListener, ConfirmDialog.OnDialogActionClickListener {
 
     private SubscriptionPresenter subscriptionPresenter;
     private TwinklingRefreshLayout overScrollView;
@@ -53,6 +54,7 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         });
         albumListAdapter = new AlbumListAdapter();
         albumListAdapter.setOnAlbumItemClickListener(this);
+        albumListAdapter.setOnAlbumItemLongClickListener(this);
         subListView.setAdapter(albumListAdapter);
         subscriptionPresenter = SubscriptionPresenter.getsInstance();
         subscriptionPresenter.registerViewCallBack(this);
@@ -100,5 +102,24 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         //item被点击了，跳转到详情页面
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(Album album) {
+        //订阅的item被长按了
+        //Toast.makeText(getActivity(), "订阅被长按", Toast.LENGTH_SHORT).show();
+        ConfirmDialog confirmDialog = new ConfirmDialog(getActivity());
+        confirmDialog.setOnDialogActionClickListener(this);
+        confirmDialog.show();
+    }
+
+    @Override
+    public void onCancelSubClick() {
+        //取消订阅内容
+    }
+
+    @Override
+    public void onGiveUpClick() {
+        //放弃取消订阅
     }
 }
