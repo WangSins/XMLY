@@ -30,7 +30,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnAlbumItemClickListener, AlbumListAdapter.OnAlbumItemLongClickListener, ConfirmDialog.OnDialogActionClickListener {
+public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnAlbumItemClickListener, AlbumListAdapter.OnAlbumItemLongClickListener {
 
     private SubscriptionPresenter subscriptionPresenter;
     private TwinklingRefreshLayout overScrollView;
@@ -146,21 +146,21 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
     }
 
     @Override
-    public void onItemLongClick(Album album) {
+    public void onItemLongClick(final Album album) {
         //订阅的item被长按了
         //Toast.makeText(getActivity(), "订阅被长按", Toast.LENGTH_SHORT).show();
         ConfirmDialog confirmDialog = new ConfirmDialog(getActivity());
-        confirmDialog.setOnDialogActionClickListener(this);
+        confirmDialog.setOnDialogActionClickListener(new ConfirmDialog.OnDialogActionClickListener() {
+            @Override
+            public void onCancelSubClick() {
+                subscriptionPresenter.deleteSubscription(album);
+            }
+
+            @Override
+            public void onGiveUpClick() {
+
+            }
+        });
         confirmDialog.show();
-    }
-
-    @Override
-    public void onCancelSubClick() {
-        //取消订阅内容
-    }
-
-    @Override
-    public void onGiveUpClick() {
-        //放弃取消订阅
     }
 }
