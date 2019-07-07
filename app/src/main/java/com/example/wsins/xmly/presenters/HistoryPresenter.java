@@ -7,6 +7,7 @@ import com.example.wsins.xmly.data.IHistoryDaoCallback;
 import com.example.wsins.xmly.interfaces.IHistoryCallback;
 import com.example.wsins.xmly.interfaces.IHistoryPersenter;
 import com.example.wsins.xmly.utils.Constants;
+import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class HistoryPresenter implements IHistoryPersenter, IHistoryDaoCallback {
 
+    private static final String TAG = "HistoryPresenter";
     private List<IHistoryCallback> callbacks = new ArrayList<>();
 
     private final IHistoryDao historyDao;
@@ -144,6 +146,7 @@ public class HistoryPresenter implements IHistoryPersenter, IHistoryDaoCallback 
     @Override
     public void onHistoryLoaded(final List<Track> lists) {
         this.currentHistories = lists;
+        LogUtil.d(TAG, "histories size --> " + lists.size());
         //通知UI更新数据
         BaseApplication.getHandler().post(new Runnable() {
             @Override

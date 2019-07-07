@@ -403,8 +403,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         LogUtil.d(TAG, "onSoundSwitch...");
         if (lastModel != null) {
             LogUtil.d(TAG, "lastModel -> " + lastModel.getKind());
+            LogUtil.d(TAG, "onSoundSwitch ->" + curModel.getKind());
         }
-        LogUtil.d(TAG, "onSoundSwitch ->" + curModel.getKind());
         //curModel代表的是当前播放的内容
         //通过getKind()获取他是什么类型的
         //track表示track类型
@@ -418,6 +418,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         if (curModel instanceof Track) {
             Track crTrack = (Track) curModel;
             currentTrack = crTrack;
+            //保存播放器记录
+            HistoryPresenter historyPresenter = HistoryPresenter.getInstance();
+            historyPresenter.addHistory(currentTrack);
             //更新UI
             for (IPlayerCallBack iPlayerCallBack : iPlayerCallBacks) {
                 iPlayerCallBack.onTrackUpdate(currentTrack, currentIndex);
