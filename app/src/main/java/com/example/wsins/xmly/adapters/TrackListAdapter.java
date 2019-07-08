@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.InnerHolder> {
+public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.InnerHolder> {
 
     private List<Track> detailData = new ArrayList<>();
     //格式化时间
@@ -32,17 +32,17 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     @Override
     public void onBindViewHolder(@NonNull InnerHolder innerHolder, final int i) {
         //找到控件
-        final View itemview = innerHolder.itemView;
+        final View itemView = innerHolder.itemView;
         //顺序ID
-        TextView orderTv = itemview.findViewById(R.id.item_id_text);
+        TextView orderTv = itemView.findViewById(R.id.item_id_text);
         //标题
-        TextView titleTv = itemview.findViewById(R.id.trick_title_text);
+        TextView titleTv = itemView.findViewById(R.id.trick_title_text);
         //播放次数
-        TextView playCountTv = itemview.findViewById(R.id.track_play_count_text);
+        TextView playCountTv = itemView.findViewById(R.id.track_play_count_text);
         //时常
-        TextView durationTv = itemview.findViewById(R.id.track_play_time_text);
+        TextView durationTv = itemView.findViewById(R.id.track_play_time_text);
         //更新日期
-        TextView updateDateTv = itemview.findViewById(R.id.update_time_text);
+        TextView updateDateTv = itemView.findViewById(R.id.update_time_text);
 
 
         //设置数据
@@ -59,7 +59,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
 
 
         //设置item的点击事件
-        itemview.setOnClickListener(new View.OnClickListener() {
+        itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //

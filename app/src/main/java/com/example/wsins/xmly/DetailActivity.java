@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.wsins.xmly.adapters.DetailListAdapter;
+import com.example.wsins.xmly.adapters.TrackListAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
@@ -44,7 +44,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallBack, UILoader.OnRetryClickListener, DetailListAdapter.ItemClickListener, IPlayerCallBack, ISubscriptionCallback {
+public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallBack, UILoader.OnRetryClickListener, TrackListAdapter.ItemClickListener, IPlayerCallBack, ISubscriptionCallback {
 
     private static final String TAG = "DetailActivity";
     private ImageView largeCover;
@@ -54,7 +54,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private AlbumDetailPresenter albumDetailPresenter;
     private int currentPage = 1;
     private RecyclerView detailList;
-    private DetailListAdapter detailListAdapter;
+    private TrackListAdapter detailListAdapter;
     private FrameLayout detailListContainer;
     private UILoader uiLoader;
     private long currentId = -1;
@@ -209,7 +209,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         detailList.setLayoutManager(linearLayoutManager);
         //设置适配器
-        detailListAdapter = new DetailListAdapter();
+        detailListAdapter = new TrackListAdapter();
         detailList.setAdapter(detailListAdapter);
         //设置item间距
         detailList.addItemDecoration(new RecyclerView.ItemDecoration() {

@@ -22,4 +22,6 @@
     <string name="sub_tips_text">+ 订阅</string>
     <string name="no_sub_content_tips_text">没有订阅,赶紧去订阅吧!</string>
     <string name="search_no_content_tips_text">没有相关内容,请别强行搜索!</string>
+
+    <string name="no_history_content_tips_text">没有历史记录,赶紧去收听吧!</string>
 </resources>
