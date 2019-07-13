@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
+import com.ximalaya.ting.android.opensdk.model.album.Announcer;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ public class HistoryDao implements IHistoryDao {
             boolean isAddSuccess = false;
             try {
                 db = dbHelper.getWritableDatabase();
+                //先去删除
+                db.delete(Constants.HISTORY_TB_NAME, Constants.HISTORY_TRACK_ID + "=?", new String[]{track.getDataId() + ""});
+                //删除以后再添加
                 db.beginTransaction();
                 ContentValues values = new ContentValues();
                 //封装数据
@@ -47,6 +51,7 @@ public class HistoryDao implements IHistoryDao {
                 values.put(Constants.HISTORY_DURATION, track.getDuration());
                 values.put(Constants.HISTORY_UPDATE_TIME, track.getUpdatedAt());
                 values.put(Constants.HISTORY_COVER, track.getCoverUrlLarge());
+                values.put(Constants.HISTORY_AUTHOR, track.getAnnouncer().getNickname());
                 //插入数据
                 db.insert(Constants.HISTORY_TB_NAME, null, values);
                 db.setTransactionSuccessful();
@@ -150,6 +155,11 @@ public class HistoryDao implements IHistoryDao {
                     //
                     long updateTime = query.getLong(query.getColumnIndex(Constants.HISTORY_UPDATE_TIME));
                     track.setUpdatedAt(updateTime);
+                    //
+                    String author = query.getString(query.getColumnIndex(Constants.HISTORY_AUTHOR));
+                    Announcer announcer = new Announcer();
+                    announcer.setNickname(author);
+                    track.setAnnouncer(announcer);
                     result.add(track);
                 }
                 query.close();

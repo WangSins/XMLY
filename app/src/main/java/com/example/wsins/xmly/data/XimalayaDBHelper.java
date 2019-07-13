@@ -46,7 +46,8 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
                 Constants.HISTORY_COVER + " varchar," +
                 Constants.HISTORY_PLAY_COUNT + " integer," +
                 Constants.HISTORY_DURATION + " integer," +
-                Constants.HISTORY_UPDATE_TIME + " integer" +
+                Constants.HISTORY_UPDATE_TIME + " integer," +
+                Constants.HISTORY_AUTHOR + " varchar" +
                 ")";
         db.execSQL(historyTbSql);
     }

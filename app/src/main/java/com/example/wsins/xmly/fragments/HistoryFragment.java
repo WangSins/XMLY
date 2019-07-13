@@ -1,5 +1,6 @@
 package com.example.wsins.xmly.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.example.wsins.xmly.PlayerActivity;
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.TrackListAdapter;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.IHistoryCallback;
 import com.example.wsins.xmly.presenters.HistoryPresenter;
+import com.example.wsins.xmly.presenters.PlayerPresenter;
 import com.example.wsins.xmly.views.UILoader;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -24,7 +27,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class HistoryFragment extends BaseFragment implements IHistoryCallback {
+public class HistoryFragment extends BaseFragment implements IHistoryCallback, TrackListAdapter.ItemClickListener {
 
     private UILoader uiLoader;
     private TwinklingRefreshLayout overScrollView;
@@ -73,6 +76,7 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback {
         historyListView = itemView.findViewById(R.id.history_list);
         historyListView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         trackListAdapter = new TrackListAdapter();
+        trackListAdapter.setItemClickListener(this);
         historyListView.setAdapter(trackListAdapter);
         historyListView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -124,5 +128,15 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback {
         if (historyPresenter != null) {
             historyPresenter.unRegisterViewCallBack(this);
         }
+    }
+
+    @Override
+    public void onItemClick(List<Track> detailData, int i) {
+        //设置播放器的数据
+        PlayerPresenter playerPresenter = PlayerPresenter.getPlayerPresenter();
+        playerPresenter.setPlayList(detailData, i);
+        //跳转到播放器界面
+        Intent intent = new Intent(getActivity(), PlayerActivity.class);
+        startActivity(intent);
     }
 }
