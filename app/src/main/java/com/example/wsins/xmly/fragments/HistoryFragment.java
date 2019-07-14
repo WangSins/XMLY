@@ -14,11 +14,11 @@ import android.widget.TextView;
 import com.example.wsins.xmly.PlayerActivity;
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.TrackListAdapter;
-import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.base.BaseFragment;
 import com.example.wsins.xmly.interfaces.IHistoryCallback;
 import com.example.wsins.xmly.presenters.HistoryPresenter;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
+import com.example.wsins.xmly.views.ConfirmCheckBoxDialog;
 import com.example.wsins.xmly.views.UILoader;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -27,13 +27,14 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class HistoryFragment extends BaseFragment implements IHistoryCallback, TrackListAdapter.ItemClickListener {
+public class HistoryFragment extends BaseFragment implements IHistoryCallback, TrackListAdapter.ItemClickListener, TrackListAdapter.ItemLongClickListener, ConfirmCheckBoxDialog.OnDialogActionClickListener {
 
     private UILoader uiLoader;
     private TwinklingRefreshLayout overScrollView;
     private RecyclerView historyListView;
     private TrackListAdapter trackListAdapter = null;
     private HistoryPresenter historyPresenter;
+    private Track currentClickHistoryItem = null;
 
     @Override
     protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
@@ -77,6 +78,7 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback, T
         historyListView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         trackListAdapter = new TrackListAdapter();
         trackListAdapter.setItemClickListener(this);
+        trackListAdapter.setItemLongClickListener(this);
         historyListView.setAdapter(trackListAdapter);
         historyListView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -92,18 +94,16 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback, T
 
     @Override
     public void onHistoriesLoaded(List<Track> tracks) {
-        if (tracks.size() == 0) {
+        if (tracks == null || tracks.size() == 0) {
             if (uiLoader != null) {
                 uiLoader.updateStatus(UILoader.UIStatus.EMPTY);
             }
         } else {
-            if (uiLoader != null) {
+            if (uiLoader != null && trackListAdapter != null) {
+                //更新数据
+                trackListAdapter.setData(tracks);
                 uiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
             }
-        }
-        //更新数据
-        if (trackListAdapter != null) {
-            trackListAdapter.setData(tracks);
         }
     }
 
@@ -138,5 +138,30 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback, T
         //跳转到播放器界面
         Intent intent = new Intent(getActivity(), PlayerActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(Track track) {
+        this.currentClickHistoryItem = track;
+        //删除历史
+        ConfirmCheckBoxDialog dialog = new ConfirmCheckBoxDialog(getActivity());
+        dialog.setOnDialogActionClickListener(this);
+        dialog.show();
+    }
+
+    @Override
+    public void onCancelClick() {
+        //不用做
+    }
+
+    @Override
+    public void onConfirmClick(boolean isChecked) {
+        if (currentClickHistoryItem != null && historyPresenter != null) {
+            if (isChecked) {
+                historyPresenter.cleanHistories();
+            } else {
+                historyPresenter.delHistory(currentClickHistoryItem);
+            }
+        }
     }
 }

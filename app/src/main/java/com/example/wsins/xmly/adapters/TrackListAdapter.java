@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wsins.xmly.R;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -21,6 +22,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.Inne
     private SimpleDateFormat updateDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat durationFormat = new SimpleDateFormat("mm:ss");
     private ItemClickListener itemClickListener = null;
+    private ItemLongClickListener itemLongClickListener = null;
 
     @NonNull
     @Override
@@ -46,7 +48,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.Inne
 
 
         //设置数据
-        Track track = detailData.get(i);
+        final Track track = detailData.get(i);
         orderTv.setText((i + 1) + "");
         titleTv.setText(track.getTrackTitle());
         playCountTv.setText(track.getPlayCount() + "");
@@ -68,6 +70,15 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.Inne
                     //参数需要有列表和位置
                     itemClickListener.onItemClick(detailData, i);
                 }
+            }
+        });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (itemLongClickListener != null) {
+                    itemLongClickListener.onItemLongClick(track);
+                }
+                return true;
             }
         });
 
@@ -99,5 +110,13 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.Inne
 
     public interface ItemClickListener {
         void onItemClick(List<Track> detailData, int i);
+    }
+
+    public void setItemLongClickListener(ItemLongClickListener listener) {
+        this.itemLongClickListener = listener;
+    }
+
+    public interface ItemLongClickListener {
+        void onItemLongClick(Track track);
     }
 }

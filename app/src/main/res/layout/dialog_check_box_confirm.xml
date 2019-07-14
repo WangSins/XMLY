@@ -4,19 +4,31 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="240dp"
-        android:layout_height="140dp"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
         android:layout_centerInParent="true"
         android:background="@drawable/shape_confirm_dialog_bg">
 
         <TextView
+            android:id="@+id/dialog_tips_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="35dp"
-            android:text="取消订阅该专辑吗?"
+            android:layout_marginTop="30dp"
+            android:text="删除当前历史记录吗?"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textSize="22sp" />
+
+        <CheckBox
+            android:id="@+id/dialog_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dialog_tips_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="清除所有的历史记录"
+            android:textColor="@color/play_list_text_color"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:id="@+id/dialog_btn_container"
@@ -26,12 +38,12 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/dialog_cancel_sub_tv"
+                android:id="@+id/dialog_check_box_cancel"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="取消订阅"
+                android:text="取消"
                 android:textSize="20sp" />
 
             <View
@@ -40,12 +52,12 @@
                 android:background="#DFDFDF" />
 
             <TextView
-                android:id="@+id/dialog_give_up_tv"
+                android:id="@+id/dialog_check_box_confirm"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="我再想想"
+                android:text="确定"
                 android:textColor="@color/main_color"
                 android:textSize="20sp" />
 
