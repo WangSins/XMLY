@@ -19,6 +19,7 @@ public class RecommendPersenter implements IRecommendPersenter {
 
     private List<IRecommendViewCallback> callBacks = new ArrayList<>();
     private List<Album> currentRecommend = null;
+    private List<Album> recommendList;
 
     private RecommendPersenter() {
     }
@@ -56,6 +57,12 @@ public class RecommendPersenter implements IRecommendPersenter {
      */
     @Override
     public void getRecommendList() {
+        //如果内容不为空，直接使用当前内容
+        if (recommendList != null && recommendList.size() > 0) {
+            LogUtil.d(TAG,"getRecommendList --> from list.");
+            handlerRecommendResult(recommendList);
+            return;
+        }
         //获取推荐内容
         updateLoading();
         XimalayaApi ximalayaApi = XimalayaApi.getXimalayaApi();
@@ -65,9 +72,10 @@ public class RecommendPersenter implements IRecommendPersenter {
                 LogUtil.d(TAG, "thread name --> " + Thread.currentThread().getName());
                 //数据获取成功
                 if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
+                    recommendList = gussLikeAlbumList.getAlbumList();
                     //获取数据回来我们要去更新UI
-                    handlerRecommendResult(albumList);
+                    LogUtil.d(TAG,"getRecommendList --> from network.");
+                    handlerRecommendResult(recommendList);
                 }
             }
 
