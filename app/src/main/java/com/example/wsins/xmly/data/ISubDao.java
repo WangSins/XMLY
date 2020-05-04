@@ -7,7 +7,7 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
  */
 public interface ISubDao {
 
-    void setCallback(ISubDaoCallback callback);
+    void setCallBack(ISubDaoCallBack callBack);
 
     /**
      * 添加专辑订阅

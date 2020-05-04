@@ -15,7 +15,7 @@ import com.example.wsins.xmly.PlayerActivity;
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.TrackListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
-import com.example.wsins.xmly.interfaces.IHistoryCallback;
+import com.example.wsins.xmly.interfaces.IHistoryCallBack;
 import com.example.wsins.xmly.presenters.HistoryPresenter;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
 import com.example.wsins.xmly.views.ConfirmCheckBoxDialog;
@@ -27,7 +27,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class HistoryFragment extends BaseFragment implements IHistoryCallback, TrackListAdapter.ItemClickListener, TrackListAdapter.ItemLongClickListener, ConfirmCheckBoxDialog.OnDialogActionClickListener {
+public class HistoryFragment extends BaseFragment implements IHistoryCallBack, TrackListAdapter.ItemClickListener, TrackListAdapter.ItemLongClickListener, ConfirmCheckBoxDialog.OnDialogActionClickListener {
 
     private UILoader uiLoader;
     private TwinklingRefreshLayout overScrollView;
@@ -85,8 +85,8 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback, T
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 outRect.top = UIUtil.dip2px(view.getContext(), 2);
                 outRect.bottom = UIUtil.dip2px(view.getContext(), 2);
-                outRect.left = UIUtil.dip2px(view.getContext(), 2);
-                outRect.right = UIUtil.dip2px(view.getContext(), 2);
+                outRect.left = UIUtil.dip2px(view.getContext(), 5);
+                outRect.right = UIUtil.dip2px(view.getContext(), 5);
             }
         });
         return itemView;

@@ -2,14 +2,14 @@ package com.example.wsins.xmly.interfaces;
 
 import com.example.wsins.xmly.base.IBasePresenter;
 
-public interface ISearchPresenter extends IBasePresenter<ISearchCallback> {
+public interface ISearchPresenter extends IBasePresenter<ISearchCallBack> {
 
     /**
      * 进行搜索
      *
-     * @param keyword
+     * @param keyWord
      */
-    void doSearch(String keyword);
+    void doSearch(String keyWord);
 
     /**
      * 重新搜索
@@ -29,7 +29,7 @@ public interface ISearchPresenter extends IBasePresenter<ISearchCallback> {
     /**
      * 获取推荐的关键字(相似的关键字)
      *
-     * @param keyword
+     * @param keyWord
      */
-    void getRecommendWord(String keyword);
+    void getRecommendWord(String keyWord);
 }

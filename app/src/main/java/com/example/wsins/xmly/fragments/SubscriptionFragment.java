@@ -17,7 +17,7 @@ import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.base.BaseFragment;
-import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
+import com.example.wsins.xmly.interfaces.ISubscriptionCallBack;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.SubscriptionPresenter;
 import com.example.wsins.xmly.utils.Constants;
@@ -30,7 +30,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnAlbumItemClickListener, AlbumListAdapter.OnAlbumItemLongClickListener {
+public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallBack, AlbumListAdapter.OnAlbumItemClickListener, AlbumListAdapter.OnAlbumItemLongClickListener {
 
     private SubscriptionPresenter subscriptionPresenter;
     private TwinklingRefreshLayout overScrollView;
@@ -75,8 +75,8 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         subListView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                outRect.top = UIUtil.dip2px(view.getContext(), 5);
-                outRect.bottom = UIUtil.dip2px(view.getContext(), 5);
+                outRect.top = UIUtil.dip2px(view.getContext(), 2);
+                outRect.bottom = UIUtil.dip2px(view.getContext(), 2);
                 outRect.left = UIUtil.dip2px(view.getContext(), 5);
                 outRect.right = UIUtil.dip2px(view.getContext(), 5);
             }

@@ -31,7 +31,7 @@ public interface IAlbumDetailViewCallBack {
      *
      * @param size size>0表示加载成功，否则表示加载失败。
      */
-    void onLoaderMoreFinashed(int size);
+    void onLoaderMoreFinished(int size);
 
     /**
      * 下拉加载更多的结果

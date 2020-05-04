@@ -15,7 +15,7 @@ public class LoadingView extends ImageView {
     //旋转角度
     private int rotateDegree = 0;
 
-    private boolean neetRotate = false;
+    private boolean needRotate = false;
 
     public LoadingView(Context context) {
         this(context, null);
@@ -35,7 +35,7 @@ public class LoadingView extends ImageView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         //绑定到window的时候
-        neetRotate = true;
+        needRotate = true;
         post(new Runnable() {
             @Override
             public void run() {
@@ -43,7 +43,7 @@ public class LoadingView extends ImageView {
                 rotateDegree = rotateDegree <= 360 ? rotateDegree : 0;
                 invalidate();
                 //是否继续旋转
-                if (neetRotate) {
+                if (needRotate) {
                     postDelayed(this, 100);
                 }
             }
@@ -54,7 +54,7 @@ public class LoadingView extends ImageView {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         //从window解绑了
-        neetRotate = false;
+        needRotate = false;
     }
 
     @Override

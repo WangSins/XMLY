@@ -16,21 +16,21 @@ import com.ximalaya.ting.android.opensdk.model.track.Track;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.InnerHoler> {
+public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.InnerHolder> {
     private List<Track> mData = new ArrayList<>();
     private int playingIndex = 0;
     private SobPopWindow.PlayListItemClickListener mItemClickListener = null;
 
     @Override
-    public InnerHoler onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public InnerHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_play_list, viewGroup, false);
 
-        return new InnerHoler(itemView);
+        return new InnerHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InnerHoler innerHoler, final int i) {
-        innerHoler.itemView.setOnClickListener(new View.OnClickListener() {
+    public void onBindViewHolder(@NonNull InnerHolder innerHolder, final int i) {
+        innerHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
@@ -41,14 +41,14 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.InnerH
         //拿到数据
         Track track = mData.get(i);
         //设置数据
-        TextView trackTitleTv = innerHoler.itemView.findViewById(R.id.track_title_tv);
+        TextView trackTitleTv = innerHolder.itemView.findViewById(R.id.track_title_tv);
         trackTitleTv.setText(track.getTrackTitle());
         //设置字体颜色
         trackTitleTv.setTextColor(
                 BaseApplication.getAppContext().getResources().getColor(playingIndex == i ?
                         R.color.second_color : R.color.play_list_text_color));
         //找到播放状态的图标
-        ImageView playingIconView = innerHoler.itemView.findViewById(R.id.pla_icon_iv);
+        ImageView playingIconView = innerHolder.itemView.findViewById(R.id.pla_icon_iv);
         playingIconView.setVisibility(playingIndex == i ? View.VISIBLE : View.GONE);
 
     }
@@ -75,8 +75,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.InnerH
         this.mItemClickListener = listener;
     }
 
-    public class InnerHoler extends RecyclerView.ViewHolder {
-        public InnerHoler(@NonNull View itemView) {
+    public class InnerHolder extends RecyclerView.ViewHolder {
+        public InnerHolder(@NonNull View itemView) {
             super(itemView);
         }
     }

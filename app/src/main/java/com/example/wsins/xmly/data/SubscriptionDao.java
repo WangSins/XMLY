@@ -20,7 +20,7 @@ public class SubscriptionDao implements ISubDao {
     private static final SubscriptionDao ourInstance = new SubscriptionDao();
     private static final String TAG = "SubscriptionDao";
     private final XimalayaDBHelper ximalayaDBHelper;
-    private ISubDaoCallback mCallback = null;
+    private ISubDaoCallBack mCallBack = null;
 
     public static SubscriptionDao getInstance() {
         return ourInstance;
@@ -31,8 +31,8 @@ public class SubscriptionDao implements ISubDao {
     }
 
     @Override
-    public void setCallback(ISubDaoCallback callback) {
-        this.mCallback = callback;
+    public void setCallBack(ISubDaoCallBack callBack) {
+        this.mCallBack = callBack;
 
     }
 
@@ -64,8 +64,8 @@ public class SubscriptionDao implements ISubDao {
                 db.endTransaction();
                 db.close();
             }
-            if (mCallback != null) {
-                mCallback.onAddResult(isAddSuccess);
+            if (mCallBack != null) {
+                mCallBack.onAddResult(isAddSuccess);
             }
         }
     }
@@ -89,8 +89,8 @@ public class SubscriptionDao implements ISubDao {
                 db.endTransaction();
                 db.close();
             }
-            if (mCallback != null) {
-                mCallback.onDelResult(isDeleteSuccess);
+            if (mCallBack != null) {
+                mCallBack.onDelResult(isDeleteSuccess);
             }
         }
     }
@@ -141,8 +141,8 @@ public class SubscriptionDao implements ISubDao {
                 db.close();
             }
             //把数据通知出去
-            if (mCallback != null) {
-                mCallback.onSubListLoaded(result);
+            if (mCallBack != null) {
+                mCallBack.onSubListLoaded(result);
             }
         }
     }

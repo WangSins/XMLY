@@ -10,7 +10,8 @@
         android:layout_height="20dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:src="@mipmap/search_icon" />
+        android:src="@mipmap/search_icon"
+        android:tint="@color/sub_text_title" />
 
     <TextView
         android:id="@+id/search_recommend_item"

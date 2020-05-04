@@ -7,7 +7,7 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
  * Created by Sin on 2019/6/30
  * 订阅存在上限，不超过100个
  */
-public interface ISubscriptionPresenter extends IBasePresenter<ISubscriptionCallback> {
+public interface ISubscriptionPresenter extends IBasePresenter<ISubscriptionCallBack> {
 
     /**
      * 添加订阅

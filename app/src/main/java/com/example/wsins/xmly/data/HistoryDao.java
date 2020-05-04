@@ -20,7 +20,7 @@ public class HistoryDao implements IHistoryDao {
 
     private static final String TAG = "HistoryDao";
     private final XimalayaDBHelper dbHelper;
-    private IHistoryDaoCallback mCallback = null;
+    private IHistoryDaoCallBack mCallBack = null;
     private Object look = new Object();
 
     public HistoryDao() {
@@ -28,8 +28,8 @@ public class HistoryDao implements IHistoryDao {
     }
 
     @Override
-    public void setCallback(IHistoryDaoCallback callback) {
-        this.mCallback = callback;
+    public void setCallback(IHistoryDaoCallBack callBack) {
+        this.mCallBack = callBack;
     }
 
     @Override
@@ -64,8 +64,8 @@ public class HistoryDao implements IHistoryDao {
                     db.endTransaction();
                     db.close();
                 }
-                if (mCallback != null) {
-                    mCallback.onHistoryAdd(isAddSuccess);
+                if (mCallBack != null) {
+                    mCallBack.onHistoryAdd(isAddSuccess);
                 }
             }
         }
@@ -91,8 +91,8 @@ public class HistoryDao implements IHistoryDao {
                     db.endTransaction();
                     db.close();
                 }
-                if (mCallback != null) {
-                    mCallback.onHistoryDel(isDeleteSuccess);
+                if (mCallBack != null) {
+                    mCallBack.onHistoryDel(isDeleteSuccess);
                 }
             }
         }
@@ -117,8 +117,8 @@ public class HistoryDao implements IHistoryDao {
                     db.endTransaction();
                     db.close();
                 }
-                if (mCallback != null) {
-                    mCallback.onHistoryClean(isCleanSuccess);
+                if (mCallBack != null) {
+                    mCallBack.onHistoryClean(isCleanSuccess);
                 }
             }
         }
@@ -172,8 +172,8 @@ public class HistoryDao implements IHistoryDao {
                     db.close();
                 }
                 //把数据通知出去
-                if (mCallback != null) {
-                    mCallback.onHistoryLoaded(result);
+                if (mCallBack != null) {
+                    mCallBack.onHistoryLoaded(result);
                 }
             }
         }

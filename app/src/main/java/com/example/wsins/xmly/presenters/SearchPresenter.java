@@ -3,7 +3,7 @@ package com.example.wsins.xmly.presenters;
 import android.support.annotation.Nullable;
 
 import com.example.wsins.xmly.data.XimalayaApi;
-import com.example.wsins.xmly.interfaces.ISearchCallback;
+import com.example.wsins.xmly.interfaces.ISearchCallBack;
 import com.example.wsins.xmly.interfaces.ISearchPresenter;
 import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
@@ -22,7 +22,7 @@ public class SearchPresenter implements ISearchPresenter {
 
     private static final String TAG = "SearchPresenter";
     //当前搜索关键字
-    private String currentKeyword = null;
+    private String currentKeyWord = null;
     private XimalayaApi ximalayaApi;
     private static final int DEFAULT_PAGE = 1;
     private int currentPage = DEFAULT_PAGE;
@@ -45,20 +45,20 @@ public class SearchPresenter implements ISearchPresenter {
         return searchPresenter;
     }
 
-    private List<ISearchCallback> callbacks = new ArrayList<>();
+    private List<ISearchCallBack> callBacks = new ArrayList<>();
 
     @Override
-    public void doSearch(String keyword) {
+    public void doSearch(String keyWord) {
         currentPage = DEFAULT_PAGE;
         searchResult.clear();
         //用于重新搜索
         //当网络不好的时候，用户会点击重新搜索
-        this.currentKeyword = keyword;
-        search(keyword);
+        this.currentKeyWord = keyWord;
+        search(keyWord);
     }
 
-    private void search(String keyword) {
-        ximalayaApi.searchByKeyWord(keyword, currentPage, new IDataCallBack<SearchAlbumList>() {
+    private void search(String keyWord) {
+        ximalayaApi.searchByKeyWord(keyWord, currentPage, new IDataCallBack<SearchAlbumList>() {
             @Override
             public void onSuccess(@Nullable SearchAlbumList searchAlbumList) {
                 List<Album> albums = searchAlbumList.getAlbums();
@@ -66,13 +66,13 @@ public class SearchPresenter implements ISearchPresenter {
                 if (albums != null) {
                     LogUtil.d(TAG, "albums size -- > " + albums.size());
                     if (isLoadMore) {
-                        for (ISearchCallback callback : callbacks) {
+                        for (ISearchCallBack callback : callBacks) {
                             callback.onLoadMoreResult(searchResult, albums.size() != 0);
                         }
                         isLoadMore = false;
                     } else {
-                        for (ISearchCallback callback : callbacks) {
-                            callback.onSearchResultLoaded(searchResult);
+                        for (ISearchCallBack callBack : callBacks) {
+                            callBack.onSearchResultLoaded(searchResult);
                         }
                     }
                 } else {
@@ -84,7 +84,7 @@ public class SearchPresenter implements ISearchPresenter {
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG, "search errorCode -- > " + errorCode);
                 LogUtil.d(TAG, "search errorMsg -- > " + errorMsg);
-                for (ISearchCallback callback : callbacks) {
+                for (ISearchCallBack callback : callBacks) {
                     if (isLoadMore) {
                         callback.onLoadMoreResult(searchResult, false);
                         isLoadMore = false;
@@ -99,7 +99,7 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void reSearch() {
-        search(currentKeyword);
+        search(currentKeyWord);
     }
 
     private boolean isLoadMore = false;
@@ -108,13 +108,13 @@ public class SearchPresenter implements ISearchPresenter {
     public void loadMore() {
         //判断有没有必要进行加载更多
         if (searchResult.size() < Constants.COUNT_DEFAULT) {
-            for (ISearchCallback callback : callbacks) {
+            for (ISearchCallBack callback : callBacks) {
                 callback.onLoadMoreResult(searchResult, false);
             }
         } else {
             isLoadMore = true;
             currentPage++;
-            search(currentKeyword);
+            search(currentKeyWord);
         }
     }
 
@@ -126,7 +126,7 @@ public class SearchPresenter implements ISearchPresenter {
                 if (hotWordList != null) {
                     List<HotWord> hotWords = hotWordList.getHotWordList();
                     LogUtil.d(TAG, "hotWords size -- > " + hotWords.size());
-                    for (ISearchCallback callback : callbacks) {
+                    for (ISearchCallBack callback : callBacks) {
                         callback.onHotWordLoaded(hotWords);
                     }
                 }
@@ -142,14 +142,14 @@ public class SearchPresenter implements ISearchPresenter {
     }
 
     @Override
-    public void getRecommendWord(String keyword) {
-        ximalayaApi.getSuggestWord(keyword, new IDataCallBack<SuggestWords>() {
+    public void getRecommendWord(String keyWord) {
+        ximalayaApi.getSuggestWord(keyWord, new IDataCallBack<SuggestWords>() {
             @Override
             public void onSuccess(@Nullable SuggestWords suggestWords) {
                 if (suggestWords != null) {
                     List<QueryResult> keyWordList = suggestWords.getKeyWordList();
                     LogUtil.d(TAG, "keyWordList size -- > " + keyWordList.size());
-                    for (ISearchCallback callback : callbacks) {
+                    for (ISearchCallBack callback : callBacks) {
                         callback.onRecommendWordLoaded(keyWordList);
                     }
                 }
@@ -165,14 +165,14 @@ public class SearchPresenter implements ISearchPresenter {
     }
 
     @Override
-    public void registerViewCallBack(ISearchCallback iSearchCallback) {
-        if (!callbacks.contains(iSearchCallback)) {
-            callbacks.add(iSearchCallback);
+    public void registerViewCallBack(ISearchCallBack iSearchCallBack) {
+        if (!callBacks.contains(iSearchCallBack)) {
+            callBacks.add(iSearchCallBack);
         }
     }
 
     @Override
-    public void unRegisterViewCallBack(ISearchCallback iSearchCallback) {
-        callbacks.remove(iSearchCallback);
+    public void unRegisterViewCallBack(ISearchCallBack iSearchCallBack) {
+        callBacks.remove(iSearchCallBack);
     }
 }

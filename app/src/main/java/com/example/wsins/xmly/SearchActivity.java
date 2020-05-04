@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.adapters.SearchRecommendAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
-import com.example.wsins.xmly.interfaces.ISearchCallback;
+import com.example.wsins.xmly.interfaces.ISearchCallBack;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.SearchPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Created by Sin on 2019/6/22
  */
-public class SearchActivity extends BaseActivity implements ISearchCallback, AlbumListAdapter.OnAlbumItemClickListener {
+public class SearchActivity extends BaseActivity implements ISearchCallBack, AlbumListAdapter.OnAlbumItemClickListener {
 
     private static final String TAG = "SearchActivity";
     private ImageView backBtn;
@@ -161,7 +161,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
             public void onItemClick(String text) {
                 //不需要相关的联想
                 needSuggestWords = false;
-                swich2Search(text);
+                switch2Search(text);
             }
         });
         if (recommendAdapter != null) {
@@ -171,7 +171,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
                     LogUtil.d(TAG, "recommendAdapter keyword -- > " + keyword);
                     //不需要相关的联想
                     needSuggestWords = false;
-                    swich2Search(keyword);
+                    switch2Search(keyword);
                 }
             });
         }
@@ -188,7 +188,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
 
     }
 
-    private void swich2Search(String text) {
+    private void switch2Search(String text) {
         //第一步，把热词扔到输入框
         inputBox.setText(text);
         inputBox.setSelection(text.length());
@@ -233,6 +233,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
                 protected View getSuccessView(ViewGroup container) {
                     return createSuccessView();
                 }
+
                 @Override
                 protected View getEmptyView() {
                     View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view, this, false);
@@ -258,6 +259,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
         //刷新控件
         refreshLayout = resultView.findViewById(R.id.search_result_refresh_layout);
         refreshLayout.setEnableRefresh(false);
+        refreshLayout.setBottomHeight(45);
         //显示热词
         recommendHotWordView = resultView.findViewById(R.id.recommend_hot_word_view);
 
@@ -272,8 +274,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
         resultListView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                outRect.top = UIUtil.dip2px(view.getContext(), 5);
-                outRect.bottom = UIUtil.dip2px(view.getContext(), 5);
+                outRect.top = UIUtil.dip2px(view.getContext(), 2);
+                outRect.bottom = UIUtil.dip2px(view.getContext(), 2);
                 outRect.left = UIUtil.dip2px(view.getContext(), 5);
                 outRect.right = UIUtil.dip2px(view.getContext(), 5);
             }

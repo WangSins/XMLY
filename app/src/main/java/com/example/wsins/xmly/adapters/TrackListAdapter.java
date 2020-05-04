@@ -49,9 +49,19 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.Inne
 
         //设置数据
         final Track track = detailData.get(i);
+
+        long playCount = track.getPlayCount();
+        String playCountString = "";
+        if (playCount < 10000) {
+            playCountString = String.valueOf(playCount);
+        } else {
+            double n = (double) playCount / 10000;
+            playCountString = String.format("%.2f万", n);
+        }
+
         orderTv.setText((i + 1) + "");
         titleTv.setText(track.getTrackTitle());
-        playCountTv.setText(track.getPlayCount() + "");
+        playCountTv.setText(playCountString);
 
         String durationText = durationFormat.format(track.getDuration() * 1000);
         durationTv.setText(durationText);

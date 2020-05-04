@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:apps="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:background="@drawable/shape_album_item_bg">
@@ -12,38 +13,39 @@
         android:layout_marginLeft="5dp"
         android:scaleType="fitXY" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_alignTop="@id/album_cover"
+        android:layout_alignBottom="@id/album_cover"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/album_cover"
-        android:orientation="vertical">
+        android:layout_toRightOf="@id/album_cover">
 
         <TextView
             android:id="@+id/album_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:lines="1"
-            android:text="拿破仑·希尔《成功学全书》"
             android:textColor="#000000"
-            android:textSize="18sp" />
+            android:textSize="16sp"
+            apps:text="拿破仑·希尔《成功学全书》" />
 
         <TextView
             android:id="@+id/album_description_tv"
             android:layout_width="match_parent"
             android:layout_height="15dp"
+            android:layout_below="@id/album_title_tv"
             android:layout_marginTop="3dp"
             android:ellipsize="end"
-            android:text="为你开启成功之路，给你指向未来！一起行动..."
             android:textColor="#ff848484"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            apps:text="为你开启成功之路，给你指向未来！一起行动..." />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -53,18 +55,18 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
                     android:src="@mipmap/play_info_icon" />
 
                 <TextView
                     android:id="@+id/album_play_count"
-                    android:layout_width="45dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
-                    android:text="234.5万"
                     android:textColor="#ff848484"
-                    android:textSize="7sp" />
+                    android:textSize="10sp"
+                    apps:text="234.5万" />
             </LinearLayout>
 
             <LinearLayout
@@ -75,23 +77,23 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
                     android:src="@mipmap/ic_sound" />
 
                 <TextView
                     android:id="@+id/album_content_size"
-                    android:layout_width="45dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
-                    android:text="23集"
                     android:textColor="#ff848484"
-                    android:textSize="7sp" />
+                    android:textSize="10dp"
+                    apps:text="23集" />
             </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </RelativeLayout>

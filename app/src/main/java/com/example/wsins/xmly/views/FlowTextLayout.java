@@ -123,9 +123,9 @@ public class FlowTextLayout extends ViewGroup {
         int measuredWidth = layoutWidth;
         float allHeight = 0;
         for (int i = 0; i < mLines.size(); i++) {
-            float mHeigth = mLines.get(i).mHeigth;
+            float mHeight = mLines.get(i).mHeigth;
             // 加行高
-            allHeight += mHeigth;
+            allHeight += mHeight;
             // 加间距
             if (i != 0) {
                 allHeight += mVerticalSpace;

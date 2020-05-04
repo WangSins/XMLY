@@ -15,7 +15,7 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.wsins.xmly.adapters.PalyerTrackPageAdapter;
+import com.example.wsins.xmly.adapters.PlayerTrackPageAdapter;
 import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
@@ -34,12 +34,12 @@ import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl
 public class PlayerActivity extends BaseActivity implements IPlayerCallBack, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "PlayerActivity";
-    private ImageView conttrolBtn;
+    private ImageView controlBtn;
     private PlayerPresenter playerPresenter;
     private SimpleDateFormat minFormat = new SimpleDateFormat("mm:ss");
     private SimpleDateFormat hourFormat = new SimpleDateFormat("hh:mm:ss");
     private TextView totalDurationTv;
-    private TextView currentPositonTV;
+    private TextView currentPositionTV;
     private SeekBar durationBar;
     private int currentProgress = 0;
     private boolean isUserTouchProgress = false;
@@ -48,7 +48,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     private TextView trackTitleTv;
     private String trackTitleText;
     private ViewPager trackPageView;
-    private PalyerTrackPageAdapter palyerTrackPageAdapter;
+    private PlayerTrackPageAdapter playerTrackPageAdapter;
     private boolean isUserSlidePage = false;
     private ImageView playerModeSwitch;
     private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> playModeRule = new HashMap<>();
@@ -105,9 +105,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
         trackPageView = this.findViewById(R.id.track_page_view);
         //创建适配器
-        palyerTrackPageAdapter = new PalyerTrackPageAdapter();
+        playerTrackPageAdapter = new PlayerTrackPageAdapter();
         //设置适配器
-        trackPageView.setAdapter(palyerTrackPageAdapter);
+        trackPageView.setAdapter(playerTrackPageAdapter);
 
         //切换播放模式
         playerModeSwitch = this.findViewById(R.id.player_mode_switch);
@@ -115,9 +115,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         playerList = this.findViewById(R.id.player_list);
         sobPopWindow = new SobPopWindow();
 
-        conttrolBtn = this.findViewById(R.id.play_or_pause);
+        controlBtn = this.findViewById(R.id.play_or_pause);
         totalDurationTv = this.findViewById(R.id.track_duration);
-        currentPositonTV = this.findViewById(R.id.current_positon);
+        currentPositionTV = this.findViewById(R.id.current_positon);
         durationBar = this.findViewById(R.id.track_seek_bar);
         playPreIv = this.findViewById(R.id.play_pre);
         playNextIv = this.findViewById(R.id.play_next);
@@ -130,7 +130,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
      */
     @SuppressLint("ClickableViewAccessibility")
     private void initEvent() {
-        conttrolBtn.setOnClickListener(new View.OnClickListener() {
+        controlBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //如果现在状态正在播放就暂停
@@ -320,22 +320,22 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     @Override
     public void onPlayStart() {
         //开始播放，修改UI层暂停
-        if (conttrolBtn != null) {
-            conttrolBtn.setImageResource(R.drawable.selector_player_pause);
+        if (controlBtn != null) {
+            controlBtn.setImageResource(R.drawable.selector_player_pause);
         }
     }
 
     @Override
     public void onPlayPause() {
-        if (conttrolBtn != null) {
-            conttrolBtn.setImageResource(R.drawable.selector_player_play);
+        if (controlBtn != null) {
+            controlBtn.setImageResource(R.drawable.selector_player_play);
         }
     }
 
     @Override
     public void onPlayStop() {
-        if (conttrolBtn != null) {
-            conttrolBtn.setImageResource(R.drawable.selector_player_play);
+        if (controlBtn != null) {
+            controlBtn.setImageResource(R.drawable.selector_player_play);
         }
     }
 
@@ -353,8 +353,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     public void onListLoaded(List<Track> list) {
         LogUtil.d(TAG, "list -> " + list);
         //把数据设置到适配器里
-        if (palyerTrackPageAdapter != null) {
-            palyerTrackPageAdapter.setData(list);
+        if (playerTrackPageAdapter != null) {
+            playerTrackPageAdapter.setData(list);
         }
         //数据回啦以后，也要给节目列表一份
         if (sobPopWindow != null) {
@@ -390,8 +390,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             totalDurationTv.setText(totalDuration);
         }
         //更新当前时间
-        if (currentPositonTV != null) {
-            currentPositonTV.setText(currentPosition);
+        if (currentPositionTV != null) {
+            currentPositionTV.setText(currentPosition);
         }
 
         //更新进度

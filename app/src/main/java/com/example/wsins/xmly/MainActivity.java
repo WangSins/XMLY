@@ -1,10 +1,16 @@
 package com.example.wsins.xmly;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.telephony.CellLocation;
+import android.telephony.TelephonyManager;
+import android.telephony.cdma.CdmaCellLocation;
+import android.telephony.gsm.GsmCellLocation;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +19,7 @@ import com.example.wsins.xmly.adapters.IndicatorAdapter;
 import com.example.wsins.xmly.adapters.MainContentAdapter;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
-import com.example.wsins.xmly.presenters.RecommendPersenter;
+import com.example.wsins.xmly.presenters.RecommendPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.RoundRectImageView;
 import com.squareup.picasso.Picasso;
@@ -111,7 +117,7 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
      * 播放第一个专辑内容
      */
     private void playFirstRecommend() {
-        List<Album> currentRecommend = RecommendPersenter.getsInstance().getCurrentRecommend();
+        List<Album> currentRecommend = RecommendPresenter.getsInstance().getCurrentRecommend();
         if (currentRecommend != null && currentRecommend.size() > 0) {
             Album album = currentRecommend.get(0);
             long albumId = album.getId();

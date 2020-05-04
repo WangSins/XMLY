@@ -1,18 +1,17 @@
-package com.example.wsins.xmly.data;
+package com.example.wsins.xmly.interfaces;
 
+import com.example.wsins.xmly.base.IBasePresenter;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 /**
- * Created by Sin on 2019/7/6
+ * Created by Sin on 2019/7/7
  */
-public interface IHistoryDao {
+public interface IHistoryPresenter extends IBasePresenter<IHistoryCallBack> {
 
     /**
-     * 设置回调接口
-     *
-     * @param callBack
+     * 获取历史内容
      */
-    void setCallback(IHistoryDaoCallBack callBack);
+    void listHistories();
 
     /**
      * 添加历史
@@ -29,12 +28,8 @@ public interface IHistoryDao {
     void delHistory(Track track);
 
     /**
-     * 清除历史
+     * 清除历史内容
      */
-    void cleanHistory();
+    void cleanHistories();
 
-    /**
-     * 获取历史内容
-     */
-    void listHistory();
 }

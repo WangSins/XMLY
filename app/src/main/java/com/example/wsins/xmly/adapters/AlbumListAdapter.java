@@ -99,10 +99,19 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Inne
             //专辑内容数量
             TextView albumContentCountTv = itemView.findViewById(R.id.album_content_size);
 
+            long playCount = album.getPlayCount();
+            String playCountString = "";
+            if (playCount < 10000) {
+                playCountString = String.valueOf(playCount);
+            } else {
+                double n = (double) playCount / 10000;
+                playCountString = String.format("%.2f万", n);
+            }
+
             albumTitleTv.setText(album.getAlbumTitle());
             albumDesrcTv.setText(album.getAlbumIntro());
-            albumPlayCountTv.setText(album.getPlayCount() + "");
-            albumContentCountTv.setText(album.getIncludeTrackCount() + "");
+            albumPlayCountTv.setText(playCountString);
+            albumContentCountTv.setText(album.getIncludeTrackCount() + "集");
 
             String coverUrlLarge = album.getCoverUrlLarge();
             if (!TextUtils.isEmpty(coverUrlLarge)) {

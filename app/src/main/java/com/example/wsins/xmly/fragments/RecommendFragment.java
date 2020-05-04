@@ -13,9 +13,9 @@ import com.example.wsins.xmly.DetailActivity;
 import com.example.wsins.xmly.R;
 import com.example.wsins.xmly.adapters.AlbumListAdapter;
 import com.example.wsins.xmly.base.BaseFragment;
-import com.example.wsins.xmly.interfaces.IRecommendViewCallback;
+import com.example.wsins.xmly.interfaces.IRecommendViewCallBack;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
-import com.example.wsins.xmly.presenters.RecommendPersenter;
+import com.example.wsins.xmly.presenters.RecommendPresenter;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.example.wsins.xmly.views.UILoader;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
@@ -25,13 +25,13 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, AlbumListAdapter.OnAlbumItemClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallBack, UILoader.OnRetryClickListener, AlbumListAdapter.OnAlbumItemClickListener {
 
     private static final String TAG = "RecommendFragment";
     private View rootView;
     private RecyclerView recommendRv;
     private AlbumListAdapter recommendListAdapter;
-    private RecommendPersenter recommendPersenter;
+    private RecommendPresenter recommendPresenter;
     private UILoader uiLoader;
     private TwinklingRefreshLayout overScrollView;
 
@@ -46,11 +46,11 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         };
 
         //获取到逻辑层对象
-        recommendPersenter = RecommendPersenter.getsInstance();
+        recommendPresenter = RecommendPresenter.getsInstance();
         //先要注册通知接口的注册
-        recommendPersenter.registerViewCallBack(this);
+        recommendPresenter.registerViewCallBack(this);
         //获取推荐列表
-        recommendPersenter.getRecommendList();
+        recommendPresenter.getRecommendList();
 
         if (uiLoader.getParent() instanceof ViewGroup) {
             ((ViewGroup) uiLoader.getParent()).removeView(uiLoader);
@@ -79,8 +79,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         recommendRv.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                outRect.top = UIUtil.dip2px(view.getContext(), 5);
-                outRect.bottom = UIUtil.dip2px(view.getContext(), 5);
+                outRect.top = UIUtil.dip2px(view.getContext(), 2);
+                outRect.bottom = UIUtil.dip2px(view.getContext(), 2);
                 outRect.left = UIUtil.dip2px(view.getContext(), 5);
                 outRect.right = UIUtil.dip2px(view.getContext(), 5);
             }
@@ -128,8 +128,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     public void onDestroyView() {
         super.onDestroyView();
         //取消接口的注册
-        if (recommendPersenter != null) {
-            recommendPersenter.unRegisterViewCallBack(this);
+        if (recommendPresenter != null) {
+            recommendPresenter.unRegisterViewCallBack(this);
         }
     }
 
@@ -137,8 +137,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     public void onRetryClick() {
         //表示网络不佳的时候用户点击了重试
         //重新获取数据即可
-        if (recommendPersenter != null) {
-            recommendPersenter.getRecommendList();
+        if (recommendPresenter != null) {
+            recommendPresenter.getRecommendList();
         }
     }
 

@@ -1,9 +1,9 @@
 package com.example.wsins.xmly.presenters;
 
 import com.example.wsins.xmly.base.BaseApplication;
-import com.example.wsins.xmly.data.ISubDaoCallback;
+import com.example.wsins.xmly.data.ISubDaoCallBack;
 import com.example.wsins.xmly.data.SubscriptionDao;
-import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
+import com.example.wsins.xmly.interfaces.ISubscriptionCallBack;
 import com.example.wsins.xmly.interfaces.ISubscriptionPresenter;
 import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
@@ -22,16 +22,16 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by Sin on 2019/7/1
  */
-public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCallback {
+public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCallBack {
 
     private static final String TAG = "SubscriptionPresenter";
     private final SubscriptionDao subscriptionDao;
     private Map<Long, Album> datas = new HashMap<>();
-    private List<ISubscriptionCallback> callbacks = new ArrayList<>();
+    private List<ISubscriptionCallBack> callbacks = new ArrayList<>();
 
     private SubscriptionPresenter() {
         subscriptionDao = SubscriptionDao.getInstance();
-        subscriptionDao.setCallback(this);
+        subscriptionDao.setCallBack(this);
     }
 
     private void listSubscriptions() {
@@ -64,7 +64,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
         //判断当前订阅数量，不超过100
         if (datas.size() >= Constants.MAX_SUB_COUNT) {
             //给出提示
-            for (ISubscriptionCallback callback : callbacks) {
+            for (ISubscriptionCallBack callback : callbacks) {
                 callback.onSubFull();
             }
             return;
@@ -104,15 +104,15 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     }
 
     @Override
-    public void registerViewCallBack(ISubscriptionCallback iSubscriptionCallback) {
-        if (!callbacks.contains(iSubscriptionCallback)) {
-            callbacks.add(iSubscriptionCallback);
+    public void registerViewCallBack(ISubscriptionCallBack iSubscriptionCallBack) {
+        if (!callbacks.contains(iSubscriptionCallBack)) {
+            callbacks.add(iSubscriptionCallBack);
         }
     }
 
     @Override
-    public void unRegisterViewCallBack(ISubscriptionCallback iSubscriptionCallback) {
-        callbacks.remove(iSubscriptionCallback);
+    public void unRegisterViewCallBack(ISubscriptionCallBack iSubscriptionCallBack) {
+        callbacks.remove(iSubscriptionCallBack);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
             @Override
             public void run() {
                 LogUtil.d(TAG, "update ui for add result.");
-                for (ISubscriptionCallback callback : callbacks) {
+                for (ISubscriptionCallBack callback : callbacks) {
                     callback.onAddResult(isSuccess);
                 }
             }
@@ -138,7 +138,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
         BaseApplication.getHandler().post(new Runnable() {
             @Override
             public void run() {
-                for (ISubscriptionCallback callback : callbacks) {
+                for (ISubscriptionCallBack callback : callbacks) {
                     callback.onDeleteResult(isSuccess);
                 }
             }
@@ -156,7 +156,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
         BaseApplication.getHandler().post(new Runnable() {
             @Override
             public void run() {
-                for (ISubscriptionCallback callback : callbacks) {
+                for (ISubscriptionCallBack callback : callbacks) {
                     callback.onSubscriptionsLoaded(result);
                 }
             }

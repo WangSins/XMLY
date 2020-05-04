@@ -3,9 +3,9 @@ package com.example.wsins.xmly.presenters;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.data.HistoryDao;
 import com.example.wsins.xmly.data.IHistoryDao;
-import com.example.wsins.xmly.data.IHistoryDaoCallback;
-import com.example.wsins.xmly.interfaces.IHistoryCallback;
-import com.example.wsins.xmly.interfaces.IHistoryPersenter;
+import com.example.wsins.xmly.data.IHistoryDaoCallBack;
+import com.example.wsins.xmly.interfaces.IHistoryCallBack;
+import com.example.wsins.xmly.interfaces.IHistoryPresenter;
 import com.example.wsins.xmly.utils.Constants;
 import com.example.wsins.xmly.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -22,10 +22,10 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Sin on 2019/7/7
  * 历史记录最大100条。如果超过100条记录那么把最前面添加的删除，再把当前的历史添加进去。
  */
-public class HistoryPresenter implements IHistoryPersenter, IHistoryDaoCallback {
+public class HistoryPresenter implements IHistoryPresenter, IHistoryDaoCallBack {
 
     private static final String TAG = "HistoryPresenter";
-    private List<IHistoryCallback> callbacks = new ArrayList<>();
+    private List<IHistoryCallBack> callBacks = new ArrayList<>();
 
     private final IHistoryDao historyDao;
     private List<Track> currentHistories = null;
@@ -114,15 +114,15 @@ public class HistoryPresenter implements IHistoryPersenter, IHistoryDaoCallback 
     }
 
     @Override
-    public void registerViewCallBack(IHistoryCallback iHistoryCallback) {
-        if (!callbacks.contains(iHistoryCallback)) {
-            callbacks.add(iHistoryCallback);
+    public void registerViewCallBack(IHistoryCallBack iHistoryCallBack) {
+        if (!callBacks.contains(iHistoryCallBack)) {
+            callBacks.add(iHistoryCallBack);
         }
     }
 
     @Override
-    public void unRegisterViewCallBack(IHistoryCallback iHistoryCallback) {
-        callbacks.remove(iHistoryCallback);
+    public void unRegisterViewCallBack(IHistoryCallBack iHistoryCallBack) {
+        callBacks.remove(iHistoryCallBack);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class HistoryPresenter implements IHistoryPersenter, IHistoryDaoCallback 
         BaseApplication.getHandler().post(new Runnable() {
             @Override
             public void run() {
-                for (IHistoryCallback callback : callbacks) {
+                for (IHistoryCallBack callback : callBacks) {
                     callback.onHistoriesLoaded(lists);
                 }
             }

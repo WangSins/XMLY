@@ -98,13 +98,13 @@ public class AlbumDetailPresenter implements IAlbumDetailPresenter {
      */
     private void handlerLoaderMoreResult(int size) {
         for (IAlbumDetailViewCallBack callBack : callBacks) {
-            callBack.onLoaderMoreFinashed(size);
+            callBack.onLoaderMoreFinished(size);
         }
 
     }
 
     @Override
-    public void getAlbumDatail(int albumId, int page) {
+    public void getAlbumDetail(int albumId, int page) {
         mTracks.clear();
         this.currentAlbumId = albumId;
         this.currentPageIndex = page;

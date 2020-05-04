@@ -22,7 +22,7 @@ import com.example.wsins.xmly.base.BaseActivity;
 import com.example.wsins.xmly.base.BaseApplication;
 import com.example.wsins.xmly.interfaces.IAlbumDetailViewCallBack;
 import com.example.wsins.xmly.interfaces.IPlayerCallBack;
-import com.example.wsins.xmly.interfaces.ISubscriptionCallback;
+import com.example.wsins.xmly.interfaces.ISubscriptionCallBack;
 import com.example.wsins.xmly.presenters.AlbumDetailPresenter;
 import com.example.wsins.xmly.presenters.PlayerPresenter;
 import com.example.wsins.xmly.presenters.SubscriptionPresenter;
@@ -44,7 +44,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallBack, UILoader.OnRetryClickListener, TrackListAdapter.ItemClickListener, IPlayerCallBack, ISubscriptionCallback {
+public class DetailActivity extends BaseActivity implements IAlbumDetailViewCallBack, UILoader.OnRetryClickListener, TrackListAdapter.ItemClickListener, IPlayerCallBack, ISubscriptionCallBack {
 
     private static final String TAG = "DetailActivity";
     private ImageView largeCover;
@@ -199,7 +199,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     }
 
-    private boolean isloaderMore = false;
+    private boolean isLoaderMore = false;
 
     private View createSuccessView(ViewGroup container) {
         View detailListView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
@@ -217,14 +217,15 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 outRect.top = UIUtil.dip2px(view.getContext(), 2);
                 outRect.bottom = UIUtil.dip2px(view.getContext(), 2);
-                outRect.left = UIUtil.dip2px(view.getContext(), 2);
-                outRect.right = UIUtil.dip2px(view.getContext(), 2);
+                outRect.left = UIUtil.dip2px(view.getContext(), 5);
+                outRect.right = UIUtil.dip2px(view.getContext(), 5);
             }
         });
         detailListAdapter.setItemClickListener(this);
         BezierLayout headerView = new BezierLayout(this);
         mRefreshLayout.setHeaderView(headerView);
-        mRefreshLayout.setMaxHeadHeight(140);
+        mRefreshLayout.setHeaderHeight(45);
+        mRefreshLayout.setBottomHeight(45);
         mRefreshLayout.setOverScrollBottomShow(false);
         mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -245,7 +246,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
                 //去加载更多内容
                 if (albumDetailPresenter != null) {
                     albumDetailPresenter.loadMore();
-                    isloaderMore = true;
+                    isLoaderMore = true;
                 }
             }
         });
@@ -254,9 +255,9 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
-        if (isloaderMore && mRefreshLayout != null) {
+        if (isLoaderMore && mRefreshLayout != null) {
             mRefreshLayout.finishLoadmore();
-            isloaderMore = false;
+            isLoaderMore = false;
         }
 
         this.currentTracks = tracks;
@@ -289,7 +290,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
         //获取专辑详情内容
         if (albumDetailPresenter != null) {
-            albumDetailPresenter.getAlbumDatail((int) id, currentPage);
+            albumDetailPresenter.getAlbumDetail((int) id, currentPage);
         }
 
 
@@ -324,7 +325,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     @Override
-    public void onLoaderMoreFinashed(int size) {
+    public void onLoaderMoreFinished(int size) {
         if (size > 0) {
             Toast.makeText(this, "成功加载" + size + "条节目", Toast.LENGTH_SHORT).show();
         } else {
@@ -342,7 +343,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     public void onRetryClick() {
         //表示用户网络不佳 的时候去点击了重新加载
         if (albumDetailPresenter != null) {
-            albumDetailPresenter.getAlbumDatail((int) currentId, currentPage);
+            albumDetailPresenter.getAlbumDetail((int) currentId, currentPage);
         }
     }
 

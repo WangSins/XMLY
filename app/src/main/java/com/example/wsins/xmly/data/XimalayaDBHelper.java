@@ -26,7 +26,7 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
         LogUtil.d(TAG, "onCreate...");
         //订阅相关字段
         //图片、title、描述、播放量、节目数量、作者名称（详情界面）专辑id
-        //coverUrl、title、descritpion、playCount、tracksCount、authorName、albumId
+        //coverUrl、title、description、playCount、tracksCount、authorName、albumId
         String subTbSql = "create table " + Constants.SUB_TB_NAME + "(" +
                 Constants.SUB_ID + " integer primary key autoincrement," +
                 Constants.SUB_COVER_URL + " varchar," +
